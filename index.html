@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dr. Ahmed Al Saka</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
+
+  <style>
+    /* ── TOKENS ── */
+    :root {
+      --canvas:    #F2F7FD;
+      --white:     #FFFFFF;
+      --ink:       #0B1F3A;
+      --ink-mid:   #2C4A6E;
+      --ink-soft:  #5A7FA8;
+      --ink-faint: #90AECB;
+      --rule:      #C8DDEF;
+      --accent:    #0D7FD5;
+      --accent-2:  #06B6D4;
+      --accent-lt: #DCF0FC;
+      --accent-dim: rgba(13,127,213,0.13);
+      --section-alt: #E8F2FB;
+      --deep:      #071B35;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--canvas);
+      color: var(--ink);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── UTILITY ── */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+    .label {
+      font-size: 0.7rem; font-weight: 600;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--accent);
+    }
+    .rule { width: 100%; height: 1px; background: var(--rule); }
+
+    /* ── NAV ── */
+    #nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(247,248,250,0.88);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.3s;
+    }
+    #nav.scrolled { border-color: var(--rule); }
+    .nav-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.1rem 2rem;
+      max-width: 1100px; margin: 0 auto;
+    }
+    .nav-brand {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.05rem;
+      color: var(--ink);
+      text-decoration: none;
+      letter-spacing: 0.01em;
+    }
+    .nav-brand em { font-style: italic; color: var(--accent); }
+    .nav-links { display: flex; align-items: center; gap: 2.2rem; }
+    .nav-links a {
+      color: var(--ink-soft);
+      text-decoration: none;
+      font-size: 0.82rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--ink); }
+    .nav-cta {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%) !important;
+      color: var(--white) !important;
+      padding: 0.5rem 1.2rem;
+      border-radius: 4px;
+      font-weight: 600 !important;
+      transition: opacity 0.2s !important;
+    }
+    .nav-cta:hover { opacity: 0.88; color: var(--white) !important; }
+
+    /* Mobile nav */
+    .nav-toggle {
+      display: none; background: none; border: none; cursor: pointer;
+      padding: 0.3rem; flex-direction: column; gap: 5px;
+    }
+    .nav-toggle span {
+      display: block; width: 22px; height: 2px;
+      background: var(--ink); border-radius: 2px; transition: 0.3s;
+    }
+
+    /* ── HERO ── */
+    #hero {
+      padding-top: 7rem;
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      align-items: center;
+      gap: 4rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding-left: 2rem;
+      padding-right: 2rem;
+      padding-bottom: 4rem;
+    }
+
+    .hero-left { position: relative; padding-left: 2rem; }
+
+    /* Signature element: the spine line */
+    .spine-line {
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--accent-2) 0%, var(--accent) 55%, transparent);
+    }
+
+    .hero-label { margin-bottom: 1.4rem; }
+
+    h1.hero-name {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(2.6rem, 5vw, 4.2rem);
+      font-weight: 400;
+      line-height: 1.08;
+      color: var(--ink);
+      margin-bottom: 0.6rem;
+    }
+    h1.hero-name em { font-style: italic; color: var(--accent); }
+
+    .hero-role {
+      font-size: 1.05rem;
+      font-weight: 300;
+      color: var(--ink-mid);
+      letter-spacing: 0.02em;
+      margin-bottom: 1.8rem;
+    }
+
+    .hero-bio {
+      font-size: 1rem;
+      line-height: 1.82;
+      color: var(--ink-soft);
+      max-width: 480px;
+      margin-bottom: 2.4rem;
+    }
+
+    .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 0.45rem;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+      color: var(--white);
+      font-size: 0.84rem; font-weight: 600;
+      letter-spacing: 0.04em;
+      padding: 0.78rem 1.8rem;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: opacity 0.2s, transform 0.2s;
+      box-shadow: 0 4px 18px rgba(13,127,213,0.35);
+    }
+    .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); color: var(--white); }
+
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 0.45rem;
+      border: 1.5px solid var(--rule);
+      color: var(--ink-mid);
+      font-size: 0.84rem; font-weight: 500;
+      padding: 0.78rem 1.8rem;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+    .hero-quick {
+      display: flex; gap: 2.5rem;
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--rule);
+    }
+    
+    .hero-quick-item .qnum {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.8rem;
+      color: var(--accent);
+      line-height: 1;
+    }
+    .hero-quick-item .qlbl {
+      font-size: 0.75rem; color: var(--ink-faint);
+      letter-spacing: 0.06em; text-transform: uppercase;
+      margin-top: 0.2rem;
+    }
+
+    /* Hero photo panel */
+    .hero-photo-panel {
+      position: relative;
+      height: 560px;
+      border-radius: 6px;
+      overflow: hidden;
+      background: linear-gradient(160deg, #0D4F8C 0%, #0B2E6E 60%, #06B6D4 100%);
+    }
+    .hero-photo-panel img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+    }
+    .hero-photo-placeholder {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'DM Serif Display', serif;
+      font-size: 7rem;
+      color: var(--accent);
+      opacity: 0.3;
+    }
+    .photo-tag {
+      position: absolute; bottom: 1.5rem; left: 1.5rem;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(8px);
+      border-radius: 4px;
+      padding: 0.6rem 1rem;
+      border-left: 3px solid var(--accent);
+    }
+    .photo-tag .pt-title { font-size: 0.78rem; font-weight: 600; color: var(--ink); }
+    .photo-tag .pt-sub { font-size: 0.68rem; color: var(--ink-soft); letter-spacing: 0.06em; text-transform: uppercase; }
+
+    /* ── SECTION BASE ── */
+    .section { padding: 6rem 0; }
+    .section-alt { background: var(--section-alt); }
+    .section-dark { background: linear-gradient(135deg, var(--deep) 0%, #0A2D5A 100%); }
+
+    .section-header { margin-bottom: 3.5rem; }
+    .section-header.centered { text-align: center; }
+    .section-header.centered .sh-rule { margin: 0.8rem auto 0; }
+
+    h2.sh-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+      font-weight: 400;
+      line-height: 1.15;
+      color: var(--ink);
+      margin-top: 0.5rem;
+    }
+    .section-dark h2.sh-title { color: var(--white); }
+
+    .sh-rule {
+      width: 36px; height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      margin-top: 0.8rem;
+      border-radius: 2px;
+    }
+
+    /* ── ABOUT ── */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: start;
+    }
+    .about-text p {
+      font-size: 1rem;
+      line-height: 1.85;
+      color: var(--ink-soft);
+      margin-bottom: 1.2rem;
+    }
+    .about-text p:last-child { margin-bottom: 0; }
+
+    .about-info { display: flex; flex-direction: column; gap: 0; }
+    .info-row {
+      display: flex; align-items: flex-start; gap: 1rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--rule);
+      font-size: 0.9rem;
+    }
+    .info-row:first-child { border-top: 1px solid var(--rule); }
+    .info-row i { color: var(--accent); flex-shrink: 0; margin-top: 0.1rem; font-size: 0.95rem; }
+    .info-row-label { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 0.15rem; }
+    .info-row-val { color: var(--ink-mid); font-weight: 400; }
+
+    /* ── EXPERIENCE TIMELINE ── */
+    .timeline { position: relative; }
+    .timeline::before {
+      content: '';
+      position: absolute; left: 0; top: 8px; bottom: 0;
+      width: 1px; background: var(--rule);
+    }
+    .tl-item {
+      position: relative;
+      padding-left: 2.2rem;
+      margin-bottom: 2.8rem;
+    }
+    .tl-item:last-child { margin-bottom: 0; }
+    .tl-dot {
+      position: absolute; left: -5px; top: 8px;
+      width: 11px; height: 11px;
+      border-radius: 50%;
+      background: var(--white);
+      border: 2px solid var(--accent-2);
+    }
+    .tl-year {
+      font-size: 0.72rem; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 0.3rem;
+    }
+    .tl-role {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.2rem; color: var(--ink);
+      margin-bottom: 0.15rem;
+    }
+    .tl-org {
+      font-size: 0.85rem; color: var(--ink-soft);
+      margin-bottom: 0.7rem;
+      display: flex; align-items: center; gap: 0.4rem;
+    }
+    .tl-desc {
+      font-size: 0.92rem; color: var(--ink-soft);
+      line-height: 1.75;
+    }
+
+    /* ── SPECIALTIES ── */
+    .spec-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5px;
+      background: var(--rule);
+      border: 1.5px solid var(--rule);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .spec-cell {
+      background: var(--white);
+      padding: 2.2rem 1.8rem;
+      transition: background 0.25s;
+    }
+    .spec-cell:hover { background: var(--accent-lt); }
+    .spec-icon-wrap {
+      width: 44px; height: 44px;
+      border-radius: 8px;
+      background: var(--accent-dim);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; color: var(--accent);
+      margin-bottom: 1.2rem;
+    }
+    .spec-cell h4 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.05rem; font-weight: 400;
+      color: var(--ink); margin-bottom: 0.6rem;
+    }
+    .spec-cell p { font-size: 0.83rem; line-height: 1.65; color: var(--ink-soft); }
+
+    /* ── SKILLS ── */
+    .skills-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+    }
+    .skills-col-title {
+      font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--ink-faint);
+      margin-bottom: 1.6rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 1px solid var(--rule);
+    }
+    .skill-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--rule);
+    }
+    .skill-row:last-child { border-bottom: none; }
+    .skill-name { font-size: 0.9rem; color: var(--ink-mid); font-weight: 400; }
+    .skill-track {
+      display: flex; align-items: center; gap: 0.8rem;
+      flex-shrink: 0;
+    }
+    .skill-bar {
+      width: 100px; height: 4px;
+      background: var(--rule); border-radius: 2px;
+      overflow: hidden;
+    }
+    .skill-fill {
+      height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      border-radius: 2px; width: 0;
+      transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+    }
+    .skill-pct { font-size: 0.75rem; color: var(--ink-faint); min-width: 28px; text-align: right; }
+
+    .pro-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
+    .pro-tag {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      border: 1px solid var(--rule);
+      color: var(--ink-mid);
+      font-size: 0.8rem;
+      padding: 0.4rem 0.85rem;
+      border-radius: 100px;
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+    .pro-tag i { color: var(--accent); font-size: 0.8rem; }
+    .pro-tag:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-lt); }
+
+    /* ── EDUCATION ── */
+    .edu-cert-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+    }
+    .edu-sub-title {
+      font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--ink-faint);
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 1px solid var(--rule);
+    }
+    .edu-entry {
+      display: flex; gap: 1.1rem; align-items: flex-start;
+      padding: 1.4rem 0;
+      border-bottom: 1px solid var(--rule);
+    }
+    .edu-entry:last-child { border-bottom: none; }
+    .edu-ico {
+      width: 40px; height: 40px; flex-shrink: 0;
+      border-radius: 8px; background: var(--accent-dim);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--accent); font-size: 1.1rem;
+    }
+    .edu-entry h5 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1rem; font-weight: 400; color: var(--ink);
+      margin-bottom: 0.2rem;
+    }
+    .edu-entry .edu-inst { font-size: 0.83rem; color: var(--ink-soft); margin-bottom: 0.1rem; }
+    .edu-entry .edu-yr { font-size: 0.75rem; color: var(--accent); font-weight: 600; }
+
+    /* ── VOLUNTEER & INTERESTS ── */
+    .vi-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+    }
+    .vol-entry {
+      display: flex; gap: 1.1rem;
+      padding: 1.4rem 0; border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .vol-entry:first-of-type { border-top: 1px solid rgba(255,255,255,0.08); }
+    .vol-ico {
+      width: 38px; height: 38px; flex-shrink: 0;
+      border-radius: 8px; background: rgba(6,182,212,0.2);
+      display: flex; align-items: center; justify-content: center;
+      color: #06D6F0; font-size: 1rem;
+    }
+    .vol-period { font-size: 0.72rem; color: #06D6F0; font-weight: 600; letter-spacing: 0.08em; margin-bottom: 0.2rem; }
+    .vol-org { font-size: 0.95rem; font-weight: 500; color: var(--white); margin-bottom: 0.3rem; }
+    .vol-desc { font-size: 0.85rem; color: #9CA3AF; line-height: 1.65; }
+
+   
+    .int-col-title {
+      font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+      margin-bottom: 1.2rem;
+    }
+    .int-pills { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+    .int-pill {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      border: 1px solid rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.7);
+      font-size: 0.83rem; padding: 0.5rem 1rem;
+      border-radius: 100px;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .int-pill i { color: #06D6F0; }
+    .int-pill:hover { border-color: #60b4e8; color: var(--white); }
+
+    /* ── CONTACT FORM ── */
+    .cf-layout {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 4rem;
+      align-items: start;
+    }
+    .cf-info { display: flex; flex-direction: column; gap: 1rem; }
+    .contact-link {
+      display: flex; align-items: center; gap: 1rem;
+      padding: 1.1rem 1.4rem;
+      background: var(--white);
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      text-decoration: none;
+      color: var(--ink-mid);
+      font-size: 0.9rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .contact-link:hover { border-color: var(--accent); transform: translateX(4px); color: var(--ink); }
+    .contact-link-ico {
+      width: 38px; height: 38px; flex-shrink: 0;
+      border-radius: 8px; background: var(--accent-dim);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--accent); font-size: 1rem;
+    }
+    .contact-link-info .cl-label { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 0.1rem; }
+    .contact-link-info .cl-val { font-size: 0.88rem; color: var(--ink-mid); }
+    .cf-form-wrap {
+      background: var(--white);
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      padding: 2.4rem;
+      display: flex; flex-direction: column; gap: 1.2rem;
+    }
+    .cf-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+    .cf-field { display: flex; flex-direction: column; gap: 0.4rem; }
+    .cf-label { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-faint); }
+    .cf-input {
+      width: 100%;
+      border: 1.5px solid var(--rule);
+      border-radius: 5px;
+      padding: 0.72rem 1rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      color: var(--ink);
+      background: var(--canvas);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .cf-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(13,127,213,0.1); background: var(--white); }
+    .cf-input::placeholder { color: var(--ink-faint); }
+    .cf-textarea { resize: vertical; min-height: 120px; }
+    .cf-submit { width: 100%; justify-content: center; margin-top: 0.4rem; }
+    .cf-success {
+      display: none;
+      align-items: center; gap: 0.5rem;
+      font-size: 0.88rem; color: #0a7c3e;
+      background: #e6f9ef; border: 1px solid #a8e6c1;
+      padding: 0.75rem 1rem; border-radius: 5px;
+    }
+    .cf-success.show { display: flex; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--ink);
+      padding: 2.5rem 0;
+      text-align: center;
+    }
+    footer p { font-size: 0.82rem; color: #4B5563; }
+    footer span { color: var(--accent); }
+
+    /* ── FADE IN ── */
+    .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .fade-up.visible { opacity: 1; transform: none; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      #hero {
+        grid-template-columns: 1fr;
+        padding-top: 6rem;
+        min-height: auto;
+      }
+      .hero-photo-panel { height: 360px; }
+      .about-grid, .skills-layout, .edu-cert-grid, .vi-grid, .cf-layout { grid-template-columns: 1fr; gap: 2.5rem; }
+      .cf-row-2 { grid-template-columns: 1fr; }
+      .spec-grid { grid-template-columns: repeat(2, 1fr); }
+      .nav-links { display: none; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0; background: var(--white); padding: 1.5rem 2rem; border-bottom: 1px solid var(--rule); gap: 1rem; box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+      .nav-links.open { display: flex; }
+      .nav-toggle { display: flex; }
+      #nav { position: fixed; }
+    }
+    @media (max-width: 560px) {
+      .spec-grid { grid-template-columns: 1fr; }
+      .hero-quick { gap: 1.5rem; flex-wrap: wrap; }
+      .container { padding: 0 1.2rem; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .fade-up { opacity: 1; transform: none; }
+      .skill-fill { transition: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav id="nav">
+    <div class="nav-inner">
+      <a href="" class="nav-brand">Dr. Ahmed <em>Al Saka</em></a>
+      <button class="nav-toggle" onclick="toggleNav()" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="nav-links" id="navLinks">
+        <a href="#about">About</a>
+        <a href="#experience">Experience</a>
+        <a href="#specialties">Specialties</a>
+        <a href="#skills">Skills</a>
+        <a href="#education">Education</a>
+        <a href="#contact" class="nav-cta">Contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-left">
+      <div class="spine-line"></div>
+      <h1 class="hero-name">Dr. Ahmed<br><em>Al Saka</em></h1>
+      <p class="hero-role">Orthopedic Physiotherapist</p>
+      <p class="hero-bio">
+        Results-Driven Physiotherapist With A Specialized Focus On Spinal Health.
+            Expert In Scoliosis Rehabilitation, Spinal Deformities, And Spine Manual Therapy —
+            Restoring Function And Improving Long-Term Postural Outcomes Through Clinical Excellence.
+      </p>
+      <div class="hero-actions">
+        <a href="#contact" class="btn-primary">
+          <i class="bi bi-envelope"></i> Get In Touch
+        </a>
+        
+      </div>
+      <div class="hero-quick">
+        <div class="hero-quick-item">
+          <div class="qnum">B.Sc.</div>
+          <div class="qlbl">Physical Therapy, KSU</div>
+        </div>
+        <div class="hero-quick-item">
+          <div class="qnum">PSSE</div>
+          <div class="qlbl">Schroth & Based programs</div>
+        </div>
+        
+      </div>
+    </div>
+
+    <div class="hero-photo-panel">
+      <img src="dr.jpeg" alt="Dr. Ahmed Al Saka" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+      <div class="hero-photo-placeholder" style="display:none;">AS</div>
+      <div class="photo-tag">
+        <div class="pt-title">Dr. Ahmed Al Saka, PT</div>
+        <div class="pt-sub">Orthopedic Physiotherapist</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about" class="section section-alt">
+    <div class="container">
+      <div class="about-grid">
+        <div class="fade-up">
+          <div class="section-header">
+            <p class="label">Who I am</p>
+            <h2 class="sh-title">Dedicated To Restoring Spinal Health</h2>
+            <div class="sh-rule"></div>
+          </div>
+          <div class="about-text">
+            <p>
+              Since Graduating, I Have Channeled My Clinical Passion Into Scoliosis And Spinal Deformity Care,
+            Applying Advanced Manual Therapy Protocols To Restore Mobility, Reduce Pain, And Improve
+            Postural Alignment For Every Patient I Work With. I Believe In Evidence-Based Practice
+            Combined With Genuine Human Care.
+            </p>
+            <p>
+              I Believe In Evidence-Based Practice Combined With Genuine Human Care —
+              Every Patient Receives A Program Built Around Their Specific Anatomy,
+              Lifestyle, And Long-Term Goals.
+            </p>
+          </div>
+        </div>
+        <div class="about-info fade-up">
+          <div class="info-row">
+            <i class="bi bi-geo-alt"></i>
+            <div>
+              <div class="info-row-label">Location</div>
+              <div class="info-row-val">Kafr El-Sheikh, Egypt</div>
+            </div>
+          </div>
+          
+          <div class="info-row">
+            <i class="bi bi-telephone"></i>
+            <div>
+              <div class="info-row-label">Phone</div>
+              <div class="info-row-val">+20 101 746 5981</div>
+            </div>
+          </div>
+          <div class="info-row">
+            <i class="bi bi-translate"></i>
+            <div>
+              <div class="info-row-label">Languages</div>
+              <div class="info-row-val">Arabic (Native) · English (Professional Working Proficiency.)</div>
+            </div>
+          </div>
+          <div class="info-row">
+            <i class="bi bi-hospital"></i>
+            <div>
+              <div class="info-row-label">Focus</div>
+              <div class="info-row-val">Orthopedic & Musculoskeletal Physiotherapy</div>
+            </div>
+          </div>
+          <div class="info-row">
+            <i class="bi bi-activity"></i>
+            <div>
+              <div class="info-row-label">Specialty</div>
+              <div class="info-row-val">Spinal Deformities · Scoliosis · Manual Therapy</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section id="experience" class="section">
+    <div class="container">
+      <div class="section-header fade-up">
+        <p class="label">Career Path</p>
+        <h2 class="sh-title">Professional Experience</h2>
+        <div class="sh-rule"></div>
+      </div>
+      <div style="max-width: 680px;">
+        <div class="timeline">
+          <div class="tl-item fade-up">
+            <div class="tl-dot"></div>
+            <p class="tl-year">2026 – Present</p>
+            <p class="tl-role">Orthopedic Physiotherapist</p>
+            <p class="tl-org"><i class="bi bi-building"></i> Start Prime Physiotherapy Center</p>
+            <p class="tl-desc">Delivering specialized orthopedic and spinal physiotherapy services. Implementing advanced manual therapy techniques for musculoskeletal and postural rehabilitation.</p>
+          </div>
+          <div class="tl-item fade-up">
+            <div class="tl-dot"></div>
+            <p class="tl-year">2026 – Present</p>
+            <p class="tl-role">Internship Doctor</p>
+            <p class="tl-org"><i class="bi bi-hospital"></i> Kafr El-Sheikh University Hospital</p>
+            <p class="tl-desc">Managed complex musculoskeletal and spinal deformity cases — including scoliosis — implementing specialized manual therapy protocols to restore function and alleviate pain.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SPECIALTIES -->
+  <section id="specialties" class="section section-alt">
+    <div class="container">
+      <div class="section-header fade-up">
+        <p class="label">What I do</p>
+        <h2 class="sh-title">Clinical Specialties</h2>
+        <div class="sh-rule"></div>
+      </div>
+      <div class="spec-grid fade-up">
+        <div class="spec-cell">
+          <div class="spec-icon-wrap"><i class="bi bi-person-standing"></i></div>
+          <h4>Scoliosis Rehabilitation</h4>
+          <p>Advanced PSSE-based programs, Schroth Method, and postural correction protocols for idiopathic and structural scoliosis.</p>
+        </div>
+        <div class="spec-cell">
+          <div class="spec-icon-wrap"><i class="bi bi-bandaid"></i></div>
+          <h4>Spine Manual Therapy</h4>
+          <p>Mobilization and manipulation targeting disc herniations, facet syndromes, and chronic spinal pain.</p>
+        </div>
+        <div class="spec-cell">
+          <div class="spec-icon-wrap"><i class="bi bi-clipboard2-pulse"></i></div>
+          <h4>Musculoskeletal PT</h4>
+          <p>Comprehensive orthopaedic assessment and treatment for joints, muscles, nerves, and connective tissue disorders.</p>
+        </div>
+        <div class="spec-cell">
+          <div class="spec-icon-wrap"><i class="bi bi-arrow-repeat"></i></div>
+          <h4>Postural Restoration</h4>
+          <p>Long-term programs to correct alignment, improve functional movement, and prevent deformity progression.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills" class="section">
+    <div class="container">
+      <div class="section-header fade-up">
+        <p class="label">Expertise</p>
+        <h2 class="sh-title">Skills & Competencies</h2>
+        <div class="sh-rule"></div>
+      </div>
+      <div class="skills-layout fade-up">
+        <div>
+          <p class="skills-col-title">Clinical Skills</p>
+          <div class="skill-row">
+            <span class="skill-name">Scoliosis & Spinal Deformities</span>
+            <div class="skill-track">
+              <div class="skill-bar"><div class="skill-fill" data-width="95"></div></div>
+              <span class="skill-pct">95%</span>
+            </div>
+          </div>
+          <div class="skill-row">
+            <span class="skill-name">Spine Manual Therapy</span>
+            <div class="skill-track">
+              <div class="skill-bar"><div class="skill-fill" data-width="92"></div></div>
+              <span class="skill-pct">92%</span>
+            </div>
+          </div>
+          <div class="skill-row">
+            <span class="skill-name">Orthopedic Assessment</span>
+            <div class="skill-track">
+              <div class="skill-bar"><div class="skill-fill" data-width="90"></div></div>
+              <span class="skill-pct">90%</span>
+            </div>
+          </div>
+          <div class="skill-row">
+            <span class="skill-name">Musculoskeletal Rehab</span>
+            <div class="skill-track">
+              <div class="skill-bar"><div class="skill-fill" data-width="88"></div></div>
+              <span class="skill-pct">88%</span>
+            </div>
+          </div>
+          <div class="skill-row">
+            <span class="skill-name">Patient Education & Care Planning</span>
+            <div class="skill-track">
+              <div class="skill-bar"><div class="skill-fill" data-width="85"></div></div>
+              <span class="skill-pct">85%</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <p class="skills-col-title">Professional skills</p>
+          <div class="pro-tags">
+            <span class="pro-tag"><i class="bi bi-people-fill"></i> Teamwork</span>
+            <span class="pro-tag"><i class="bi bi-trophy-fill"></i> Leadership</span>
+            <span class="pro-tag"><i class="bi bi-chat-dots-fill"></i> Communication</span>
+            <span class="pro-tag"><i class="bi bi-lightbulb-fill"></i> Problem Solving</span>
+            <span class="pro-tag"><i class="bi bi-microsoft"></i> Microsoft Office</span>
+            <span class="pro-tag"><i class="bi bi-palette-fill"></i> Graphic Design</span>
+            <span class="pro-tag"><i class="bi bi-graph-up"></i> Digital Marketing</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EDUCATION -->
+  <section id="education" class="section section-alt">
+    <div class="container">
+      <div class="section-header fade-up">
+        <p class="label">Academic & Credentials</p>
+        <h2 class="sh-title">Education & Certificates</h2>
+        <div class="sh-rule"></div>
+      </div>
+      <div class="edu-cert-grid fade-up">
+        <div>
+          <p class="edu-sub-title">Education</p>
+          <div class="edu-entry">
+            <div class="edu-ico"><i class="bi bi-mortarboard-fill"></i></div>
+            <div>
+              <h5>B.Sc. in Physical Therapy</h5>
+              <p class="edu-inst">Faculty of Physical Therapy, Kafr El-Sheikh University</p>
+              <p class="edu-yr">2021 – 2026</p>
+            </div>
+          </div>
+        </div>
+        <div>
+          <p class="edu-sub-title">Certificates</p>
+          <div class="edu-entry">
+            <div class="edu-ico"><i class="bi bi-award-fill"></i></div>
+            <div>
+              <h5>First Scientific Conference</h5>
+              <p class="edu-inst">Faculty of Physical Therapy, KSU</p>
+              <p class="edu-yr">November 4, 2023</p>
+            </div>
+          </div>
+          <div class="edu-entry">
+            <div class="edu-ico" style="background: rgba(66,133,244,0.12); color: #4285F4;"><i class="bi bi-google"></i></div>
+            <div>
+              <h5>Google Digital Marketing</h5>
+              <p class="edu-inst">Professional Certification — Digital Marketing Foundations</p>
+              <p class="edu-yr">Google</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VOLUNTEER & INTERESTS -->
+  <section class="section section-dark">
+    <div class="container">
+      <div class="vi-grid">
+        <div class="fade-up">
+          <p class="label" style="color:#06D6F0;">Community</p>
+          <h2 class="sh-title" style="color:var(--white); margin-top:0.4rem; margin-bottom:1.8rem;">Volunteer Work</h2>
+          <div class="vol-entry">
+            <div class="vol-ico"><i class="bi bi-heart-fill"></i></div>
+            <div>
+              <p class="vol-period">2021 – 2026</p>
+              <p class="vol-org">Mostaqbal Watan · Hayaa Karima · Life Makers</p>
+              <p class="vol-desc">Coordinator role focused on public health awareness, community wellbeing, and social development initiatives across Egypt.</p>
+            </div>
+          </div>
+        </div>
+        <div class="fade-up">
+          <p class="label" style="color:#06D6F0;">Outside the clinic</p>
+          <h2 class="sh-title" style="color:var(--white); margin-top:0.4rem; margin-bottom:1.8rem;">Interests</h2>
+          <div class="int-pills">
+            <span class="int-pill"><i class="bi bi-briefcase-fill"></i> Business & Entrepreneurship</span>
+            <span class="int-pill"><i class="bi bi-droplet-fill"></i> Swimming</span>
+            <span class="int-pill"><i class="bi bi-hand-thumbs-up-fill"></i> Volunteering</span>
+            <span class="int-pill"><i class="bi bi-book-fill"></i> Reading</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="section">
+    <div class="container">
+      <div class="section-header centered fade-up">
+        <p class="label">Get In Touch</p>
+        <h2 class="sh-title">Send Me A Message</h2>
+        <div class="sh-rule"></div>
+      </div>
+      <div class="cf-layout fade-up">
+
+        <!-- Left: info cards -->
+        <div class="cf-info">
+          
+          <a href="https://wa.me/+201017465981" class="contact-link">
+            <div class="contact-link-ico"><i class="bi bi-whatsapp"></i></div>
+            <div class="contact-link-info">
+              <div class="cl-label">WhatsApp</div>
+              <div class="cl-val">+20 101 746 5981</div>
+            </div>
+          </a>
+          <span class="contact-link" style="cursor:default;">
+            <div class="contact-link-ico"><i class="bi bi-geo-alt-fill"></i></div>
+            <div class="contact-link-info">
+              <div class="cl-label">Location</div>
+              <div class="cl-val">Kafr El-Sheikh, Egypt</div>
+            </div>
+          </span>
+        </div>
+
+        <!-- Right: form -->
+        <div class="cf-form-wrap">
+          <div class="cf-row-2">
+            <div class="cf-field">
+              <label class="cf-label" for="cf-name">Full Name</label>
+              <input class="cf-input" id="cf-name" type="text" placeholder="Your name" />
+            </div>
+            <div class="cf-field">
+              <label class="cf-label" for="cf-email">Email Address</label>
+              <input class="cf-input" id="cf-email" type="email" placeholder="your@email.com" />
+            </div>
+          </div>
+          <div class="cf-field">
+            <label class="cf-label" for="cf-subject">Subject</label>
+            <input class="cf-input" id="cf-subject" type="text" placeholder="How can I help?" />
+          </div>
+          <div class="cf-field">
+            <label class="cf-label" for="cf-msg">Message</label>
+            <textarea class="cf-input cf-textarea" id="cf-msg" rows="5" placeholder="Tell me about your condition or inquiry…"></textarea>
+          </div>
+          <button class="btn-primary cf-submit" onclick="submitForm()">
+            <i class="bi bi-send-fill"></i> Send Message
+          </button>
+          <p class="cf-success" id="cf-success">
+            <i class="bi bi-check-circle-fill"></i> Thank you! I'll get back to you shortly.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p> 2026 © <span>Dr. Ahmed Al Saka, PT</span> · All Rights Reserved.</p>
+  </footer>
+
+  <script>
+    // Nav scroll
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 50);
+    });
+
+    // Mobile toggle
+    function toggleNav() {
+      document.getElementById('navLinks').classList.toggle('open');
+    }
+    document.querySelectorAll('#navLinks a').forEach(a => {
+      a.addEventListener('click', () => document.getElementById('navLinks').classList.remove('open'));
+    });
+
+    // Fade-up observer
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) {
+          setTimeout(() => e.target.classList.add('visible'), i * 80);
+        }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+    // Skill bars
+    const skillObs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.querySelectorAll('.skill-fill').forEach(bar => {
+            setTimeout(() => { bar.style.width = bar.dataset.width + '%'; }, 200);
+          });
+          skillObs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.2 });
+    document.querySelectorAll('#skills').forEach(el => skillObs.observe(el));
+
+    // Active nav
+    const sections = document.querySelectorAll('section[id]');
+    const navAs = document.querySelectorAll('.nav-links a:not(.nav-cta)');
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(s => { if (window.scrollY >= s.offsetTop - 140) current = s.id; });
+      navAs.forEach(a => {
+        const active = a.getAttribute('href') === '#' + current;
+        a.style.color = active ? 'var(--ink)' : '';
+        a.style.fontWeight = active ? '600' : '';
+      });
+    });
+    // Contact form
+    async function submitForm() {
+  const name    = document.getElementById('cf-name').value.trim();
+  const email   = document.getElementById('cf-email').value.trim();
+  const subject = document.getElementById('cf-subject').value.trim();
+  const msg     = document.getElementById('cf-msg').value.trim();
+
+  if (!name || !email || !msg) {
+    alert('Please fill in your name, email, and message.');
+    return;
+  }
+
+  const btn = document.querySelector('.cf-submit');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Sending…';
+
+  const res = await fetch('https://formspree.io/f/xvzjpzay', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({ name, email, subject, message: msg })
+  });
+
+  if (res.ok) {
+    document.getElementById('cf-success').classList.add('show');
+    document.getElementById('cf-name').value = '';
+    document.getElementById('cf-email').value = '';
+    document.getElementById('cf-subject').value = '';
+    document.getElementById('cf-msg').value = '';
+    btn.innerHTML = '<i class="bi bi-check-lg"></i> Sent!';
+  } else {
+    alert('Something went wrong. Please try again.');
+    btn.disabled = false;
+    btn.innerHTML = '<i class="bi bi-send-fill"></i> Send Message';
+  }
+}
+
+  </script>
+</body>
+</html>
