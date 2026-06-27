@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Tools PT — Dr. Ahmed Al Saka</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+/* ── LIGHT MODE IDENTITY ── */
+:root{
+  --navy:#f8fafc;       /* Body BG */
+  --navy2:#ffffff;      /* Topbar & Sidebar BG */
+  --navy3:#f1f5f9;      /* Inner containers */
+  --card:#ffffff;       /* Cards */
+  --card2:#f8fafc;      /* Tabs/Subcards BG */
+  --border:#e2e8f0;     /* Borders */
+  --border2:#cbd5e1;    /* Hover borders */
+  --teal:#0d9488;       /* Primary teal adjusted for light background */
+  --teal2:#115e59;
+  --cyan:#06b6d4;
+  --amber:#d97706;--red:#dc2626;--green:#16a34a;
+  --indigo:#4f46e5;--pink:#db2777;
+  --text:#0f172a;       /* Dark text for contrast */
+  --muted:#64748b;--light:#475569;--dim:#94a3b8;
+}
+
+html,body{height:100%;font-family:'Inter',sans-serif;background:var(--navy);color:var(--text);overflow:hidden}
+button{cursor:pointer;font-family:'Inter',sans-serif}
+input,textarea,select{font-family:'Inter',sans-serif}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--navy)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+
+/* ── LAYOUT ── */
+.app{display:grid;grid-template-columns:220px 1fr;grid-template-rows:56px 1fr;height:100vh}
+.topbar{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:var(--navy2);border-bottom:1px solid var(--border);z-index:100}
+.sidebar{background:var(--navy2);border-right:1px solid var(--border);padding:14px 0;overflow-y:auto;display:flex;flex-direction:column;transition:transform 0.3s ease}
+.main{overflow-y:auto;padding:28px 32px;background:var(--navy)}
+
+/* ── LOCK SCREEN ── */
+#lock-screen{position:fixed;top:0;left:0;width:100%;height:100%;background:#f1f5f9;display:flex;justify-content:center;align-items:center;z-index:9999;font-family:'Inter',sans-serif}
+.lock-box{background:#ffffff;padding:32px;border-radius:16px;box-shadow:0 10px 25px rgba(0,0,0,0.05);text-align:center;max-width:360px;width:90%;border:1px solid var(--border)}
+.lock-box h2{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:24px;margin-bottom:8px;color:#0f172a}
+.lock-box p{font-size:13px;color:var(--muted);margin-bottom:20px}
+.lock-box input{width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:8px;margin-bottom:12px;outline:none;font-size:14px;text-align:center;transition:border-color 0.2s}
+.lock-box input:focus{border-color:var(--teal)}
+.lock-box button{width:100%;padding:11px;background:var(--teal);color:#ffffff;border:none;border-radius:8px;font-weight:600;font-size:14px;transition:background 0.2s}
+.lock-box button:hover{background:var(--teal2)}
+.lock-error{color:var(--red);font-size:12px;margin-top:8px;display:none;font-weight:500}
+
+/* ── TOPBAR ── */
+.logo{display:flex;align-items:center;gap:10px}
+.menu-toggle{display:none;background:transparent;border:none;font-size:22px;color:var(--text);cursor:pointer;margin-right:8px}
+.logo-mark{width:32px;height:32px;border-radius:8px;background:var(--teal);display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:15px;color:#ffffff;letter-spacing:-0.03em}
+.logo-text{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:20px;letter-spacing:-0.01em;color:var(--text)}
+.logo-text em{font-style:normal;color:var(--teal)}
+.topbar-badge{font-size:11px;padding:5px 12px;border-radius:20px;background:rgba(13,148,136,0.06);border:1px solid rgba(13,148,136,0.15);color:var(--teal);font-weight:600;letter-spacing:0.04em}
+
+/* ── SIDEBAR ── */
+.nav-label{font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);padding:10px 16px 4px;margin-top:6px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 14px;margin:1px 8px;border-radius:8px;font-size:13px;font-weight:500;color:var(--light);border:none;background:transparent;width:calc(100% - 16px);text-align:left;transition:all 0.15s;cursor:pointer}
+.nav-item:hover{background:rgba(0,0,0,0.03);color:var(--text)}
+.nav-item.active{background:rgba(13,148,136,0.08);color:var(--teal);font-weight:600}
+.nav-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.nav-ico{font-size:14px;width:16px;text-align:center;flex-shrink:0}
+.sidebar-foot{margin-top:auto;padding:14px 16px;border-top:1px solid var(--border)}
+.sf-name{font-size:12px;font-weight:600;color:var(--text)}
+.sf-role{font-size:11px;color:var(--muted);margin-top:2px}
+
+/* ── PAGES ── */
+.page{display:none}.page.active{display:block}
+
+/* ── PAGE HEADER ── */
+.ph{margin-bottom:26px}
+.ph-eye{font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--teal);font-weight:600;margin-bottom:5px}
+.ph-title{font-family:'Barlow Condensed',sans-serif;font-size:clamp(26px,3vw,40px);font-weight:800;letter-spacing:-0.02em;line-height:1.1}
+.ph-sub{font-size:14px;color:var(--light);margin-top:6px;line-height:1.6;max-width:580px}
+.ph-line{width:40px;height:3px;background:var(--teal);border-radius:2px;margin-top:14px}
+
+/* ── DASHBOARD ── */
+.dash-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:26px}
+.ds-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,0.02)}
+.ds-val{font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:800;color:var(--teal);line-height:1}
+.ds-lbl{font-size:12px;color:var(--muted);margin-top:4px}
+.dash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
+.tc{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.02)}
+.tc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--tc-c,var(--teal));opacity:0;transition:opacity 0.2s}
+.tc:hover{border-color:var(--tc-c,var(--teal));transform:translateY(-3px);box-shadow:0 10px 25px rgba(0,0,0,0.05)}
+.tc:hover::before{opacity:1}
+.tc-ico{font-size:28px;margin-bottom:12px}
+.tc-name{font-family:'Barlow Condensed',sans-serif;font-size:19px;font-weight:800;margin-bottom:6px}
+.tc-desc{font-size:13px;color:var(--light);line-height:1.55;margin-bottom:14px}
+.tc-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px}
+.ttag{font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;letter-spacing:0.04em;text-transform:uppercase}
+.tc-btn{width:100%;padding:9px;border-radius:8px;font-size:13px;font-weight:600;border:1.5px solid var(--tc-c,var(--teal));color:var(--tc-c,var(--teal));background:transparent;transition:all 0.15s}
+.tc-btn:hover{background:var(--tc-c,var(--teal));color:#ffffff}
+
+/* ── PHASE BAR ── */
+.phase-bar{display:flex;gap:6px;margin-bottom:18px;overflow-x:auto;padding-bottom:2px}
+.pp{flex:1;min-width:90px;padding:9px 8px;border-radius:10px;border:1.5px solid var(--border);background:var(--card);color:var(--muted);text-align:left;transition:all 0.15s;cursor:pointer;font-family:'Inter',sans-serif}
+.pp:hover{border-color:var(--border2);color:var(--light)}
+.pp.act{border-color:var(--pc);background:rgba(var(--pr),0.06);color:var(--text)}
+.pp-n{font-size:10px;letter-spacing:0.1em;text-transform:uppercase;opacity:0.8;color:var(--pc);font-weight:600}
+.pp-name{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;line-height:1.2;margin-top:2px}
+.pp-wk Pisano{font-size:10px;opacity:0.7;margin-top:2px}
+
+/* ── PHASE HEADER ── */
+.phdr{border-radius:12px;padding:18px 20px;margin-bottom:16px;border:1px solid rgba(var(--pr),0.15);background:rgba(var(--pr),0.04)}
+.phdr-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.phdr-lbl{font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--pc);margin-bottom:4px;font-weight:600}
+.phdr-name{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:800;color:var(--text);line-height:1}
+.phdr-goal{font-size:13px;color:var(--light);margin-top:5px;line-height:1.5}
+.phdr-crit{margin-top:10px;padding:8px 12px;background:var(--navy3);border-radius:8px;border-left:3px solid var(--pc);font-size:12px;color:var(--light)}
+.crit-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;font-weight:600}
+
+/* ── RING ── */
+.ring-w{min-width:64px;text-align:center;flex-shrink:0}
+.ring-pct{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;line-height:1;margin-top:-48px;display:block;color:var(--text)}
+.ring-sub{font-size:10px;color:var(--muted);margin-top:2px}
+
+/* ── TABS ── */
+.tabs{display:flex;gap:4px;background:var(--card2);border-radius:8px;padding:3px;margin-bottom:14px;border:1px solid var(--border)}
+.tab{flex:1;padding:7px 8px;border-radius:6px;background:transparent;border:none;color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;transition:all 0.15s}
+.tab.act{background:var(--card);color:var(--text);box-shadow:0 1px 2px rgba(0,0,0,0.03)}
+
+/* ── EXERCISES ── */
+.ex-list{display:flex;flex-direction:column;gap:8px}
+.ex-card{display:flex;align-items:flex-start;gap:11px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:11px 14px;transition:border-color 0.15s;box-shadow:0 1px 2px rgba(0,0,0,0.01)}
+.ex-card.done{opacity:0.6}
+.chkbox{width:20px;height:20px;border-radius:5px;border:1.5px solid var(--border2);background:transparent;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#ffffff;margin-top:1px;transition:all 0.15s}
+.chkbox.on{border-color:var(--pc);background:var(--pc)}
+.ex-info{flex:1;min-width:0}
+.ex-row{display:flex;align-items:baseline;gap:7px;flex-wrap:wrap}
+.ex-name{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--text)}
+.ex-name.done{text-decoration:line-through;color:var(--muted)}
+.ex-bdg{font-size:11px;padding:2px 7px;border-radius:4px;font-weight:600;background:rgba(var(--pr),0.08);color:var(--pc)}
+.ex-rps{font-size:11px;color:var(--muted)}
+.ex-note{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.4}
+.ex-num{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;color:var(--border);flex-shrink:0}
+.reset-btn{width:100%;margin-top:6px;padding:9px;background:transparent;border:1px dashed var(--border2);border-radius:8px;color:var(--muted);font-size:12px;cursor:pointer;transition:all 0.15s}
+.reset-btn:hover{border-color:var(--muted);color:var(--light)}
+
+/* ── MILESTONES ── */
+.ms-list{display:flex;flex-direction:column;gap:10px}
+.ms-item{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:13px 16px}
+.ms-num{width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:rgba(var(--pr),0.08);border:1.5px solid var(--pc);font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:800;color:var(--pc)}
+.ms-txt{font-size:14px;color:var(--light);line-height:1.4}
+
+/* ── PRECAUTIONS ── */
+.pr-list{display:flex;flex-direction:column;gap:10px}
+.pr-item{display:flex;gap:12px;background:#fef2f2;border:1px solid rgba(220,38,38,0.15);border-radius:10px;padding:13px 16px}
+.pr-ico{font-size:18px;flex-shrink:0}
+.pr-txt{font-size:13px;color:#991b1b;line-height:1.5}
+.outcomes{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-top:12px}
+.out-row{display:flex;gap:12px;margin-bottom:7px}
+.out-term{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:var(--teal);min-width:72px}
+.out-desc{font-size:12px;color:var(--muted);line-height:1.4}
+
+/* ── SPINE ── */
+.spine-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px}
+.sp-section{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,0.01)}
+.sp-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;margin-bottom:12px;color:var(--text)}
+.sp-item{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border)}
+.sp-item:last-child{border-bottom:none;padding-bottom:0}
+.sp-lbl{flex:1;font-size:12px;color:var(--light);line-height:1.4}
+.sp-opts{display:flex;gap:4px;flex-shrink:0}
+.opt{padding:4px 9px;border-radius:6px;border:1px solid var(--border);background:transparent;font-size:11px;font-weight:700;color:var(--muted);cursor:pointer;transition:all 0.12s}
+.opt.p{background:rgba(22,163,74,0.1);border-color:#16a34a;color:#16a34a}
+.opt.m{background:rgba(217,119,6,0.1);border-color:#d97706;color:#d97706}
+.opt.n{background:rgba(220,26,26,0.1);border-color:#dc2626;color:#dc2626}
+.sp-summary{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;margin-top:14px}
+.sp-sum-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)}
+.sp-sum-row:last-child{border-bottom:none}
+.sp-sum-key{font-size:13px;color:var(--light)}
+.sp-sum-val{font-size:13px;font-weight:600}
+
+/* ── LIBRARY ── */
+.lib-search{width:100%;padding:10px 14px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;outline:none;margin-bottom:12px;transition:border-color 0.15s;box-shadow:0 1px 2px rgba(0,0,0,0.01)}
+.lib-search:focus{border-color:var(--teal)}
+.lib-search::placeholder{color:var(--dim)}
+.filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px}
+.fbtn{padding:6px 12px;border-radius:16px;border:1px solid var(--border);background:var(--card);color:var(--light);font-size:12px;cursor:pointer;transition:all 0.15s}
+.fbtn.on{background:rgba(13,148,136,0.1);border-color:var(--teal);color:var(--teal);font-weight:600}
+.lib-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:12px}
+.lib-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;transition:all 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.01)}
+.lib-card:hover{border-color:var(--border2);transform:translateY(-2px)}
+.lib-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:7px}
+.lib-name{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700}
+.lib-cat{font-size:10px;padding:3px 8px;border-radius:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em}
+.lib-muscle{font-size:12px;color:var(--light);margin-bottom:5px}
+.lib-detail{font-size:12px;color:var(--muted);line-height:1.45}
+.lib-foot{margin-top:10px;padding-top:10px;border-top:1px solid var(--border);display:flex;gap:5px;flex-wrap:wrap}
+.lib-chip{font-size:10px;padding:2px 7px;border-radius:5px;background:var(--card2);border:1px solid var(--border);color:var(--muted)}
+.empty{grid-column:1/-1;text-align:center;padding:48px 20px;color:var(--muted);font-size:14px}
+
+/* ── TRACKER ── */
+.tracker-layout{display:grid;grid-template-columns:260px 1fr;gap:20px}
+.form-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;align-self:start}
+.form-box h3{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;margin-bottom:16px}
+.fld{margin-bottom:11px}
+.fld label{display:block;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--light);margin-bottom:5px}
+.fld input,.fld select,.fld textarea{width:100%;padding:8px 11px;background:var(--card2);border:1px solid var(--border);border-radius:7px;color:var(--text);font-size:13px;outline:none;transition:border-color 0.15s}
+.fld input:focus,.fld select:focus,.fld textarea:focus{border-color:var(--teal)}
+.fld select option{background:var(--card)}
+.fld textarea{min-height:64px;resize:vertical}
+.add-btn{width:100%;padding:11px;border-radius:8px;background:var(--teal);color:#ffffff;font-weight:700;font-size:14px;border:none;margin-top:2px;transition:background 0.15s}
+.add-btn:hover{background:var(--teal2)}
+.pt-list{display:flex;flex-direction:column;gap:10px}
+.pt-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;transition:border-color 0.15s}
+.pt-card:hover{border-color:var(--border2)}
+.pt-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.pt-name{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700}
+.pt-badge{font-size:11px;font-weight:700;padding:3px 9px;border-radius:10px}
+.pt-meta{display:flex;gap:14px;font-size:12px;color:var(--muted);margin-bottom:10px;flex-wrap:wrap}
+.pt-bar{height:4px;background:var(--border);border-radius:2px;margin-bottom:5px;overflow:hidden}
+.pt-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--teal),var(--cyan));transition:width 0.5s}
+.pt-bar-lbl{display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}
+.pt-notes{font-size:12px;color:var(--light);margin-top:8px;padding-top:8px;border-top:1px solid var(--border);line-height:1.5}
+.pt-actions{display:flex;gap:8px;margin-top:10px;align-items:center}
+.pt-sel{flex:1;padding:6px 8px;border-radius:6px;background:var(--card2);border:1px solid var(--border);color:var(--text);font-size:12px;outline:none}
+.pt-del{background:transparent;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:12px;padding:5px 10px;cursor:pointer;transition:all 0.15s}
+.pt-del:hover{border-color:var(--red);color:var(--red)}
+.empty-pt{text-align:center;padding:40px 20px;color:var(--muted);background:var(--card);border:1px dashed var(--border);border-radius:12px;font-size:14px;line-height:1.6}
+
+/* ── RESPONSIVE RESPONSES & MOBILE BACKDROP ── */
+@media(max-width:800px){
+  .app{grid-template-columns:1fr;grid-template-rows:56px 1fr}
+  .menu-toggle{display:block}
+  
+  /* Sidebar Drawer styling for Mobile */
+  .sidebar{
+    position:fixed;top:56px;left:0;bottom:0;width:240px;
+    z-index:99;transform:translateX(-100%);
+    box-shadow:5px 0 15px rgba(0,0,0,0.05);
+  }
+  .sidebar.open{transform:translateX(0)}
+  
+  .main{padding:20px 16px}
+  .tracker-layout{grid-template-columns:1fr}
+  .dash-stats{grid-template-columns:1fr 1fr 1fr}
+  .phase-bar{gap:4px}
+  .pp{min-width:80px}
+}
+</style>
+</head>
+<body>
+
+<!-- ── LOCK SCREEN ── -->
+<div id="lock-screen">
+  <div class="lock-box">
+    <div style="width:48px;height:48px;border-radius:12px;background:var(--teal);display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:22px;color:#fff;margin:0 auto 16px">PT</div>
+    <h2>Injury PT</h2>
+    <p>Dr. Ahmed Al Saka — Clinical Tools<br>Enter your access password to continue</p>
+    <input type="password" id="lock-input" placeholder="••••••••" onkeydown="if(event.key==='Enter')checkPass()"/>
+    <button onclick="checkPass()">Unlock →</button>
+    <div class="lock-error" id="lock-err">Incorrect password. Please try again.</div>
+    <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
+      <a href="https://dr-alsaka.github.io/" style="font-size:12px;color:var(--muted);text-decoration:none;display:inline-flex;align-items:center;gap:5px;transition:color 0.15s" onmouseover="this.style.color='var(--teal)'" onmouseout="this.style.color='var(--muted)'">
+        ← Back to Portfolio
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="app">
+
+<!-- ── TOPBAR ── -->
+<header class="topbar">
+  <div class="logo">
+    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+    <div class="logo-mark">PT</div>
+    <span class="logo-text">Injury <em>PT</em></span>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px">
+    <a href="https://dr-alsaka.github.io/" style="font-size:12px;color:var(--muted);text-decoration:none;display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border-radius:6px;border:1px solid var(--border);transition:all 0.15s" onmouseover="this.style.borderColor='var(--teal)';this.style.color='var(--teal)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">← Portfolio</a>
+    <span class="topbar-badge">Dr. Ahmed Al Saka</span>
+  </div>
+</header>
+
+<!-- ── SIDEBAR ── -->
+<nav class="sidebar" id="app-sidebar">
+  <div class="nav-label">Overview</div>
+  <button class="nav-item active" onclick="nav('home')">
+    <span class="nav-ico">🏠</span> Dashboard
+  </button>
+
+  <div class="nav-label">Rehab Protocols</div>
+  <button class="nav-item" onclick="nav('acl')">
+    <span class="nav-dot" style="background:#dc2626"></span> ACL Rehab Program
+  </button>
+  <button class="nav-item" onclick="nav('shoulder')">
+    <span class="nav-dot" style="background:#d97706"></span> Shoulder Rehab
+  </button>
+  <button class="nav-item" onclick="nav('ldhm')">
+    <span class="nav-dot" style="background:#0d9488"></span> Lumbar Disc Herniation
+  </button>
+  <button class="nav-item" onclick="nav('scoliosis')">
+    <span class="nav-dot" style="background:#db2777"></span> Scoliosis — Schroth
+  </button>
+  <button class="nav-item" onclick="nav('impingement')">
+    <span class="nav-dot" style="background:#d97706"></span> Shoulder Impingement
+  </button>
+  <button class="nav-item" onclick="nav('achilles')">
+    <span class="nav-dot" style="background:#16a34a"></span> Achilles Tendinopathy
+  </button>
+  <button class="nav-item" onclick="nav('patellar')">
+    <span class="nav-dot" style="background:#059669"></span> Patellar Tendinopathy
+
+ 
+  <button class="nav-item" onclick="nav('spine')">
+    <span class="nav-dot" style="background:#4f46e5"></span> Spine Assessment
+  </button>
+
+  <div class="nav-label">Resources</div>
+  <button class="nav-item" onclick="nav('library')">
+    <span class="nav-ico">📚</span> Exercise Library
+  </button>
+  <button class="nav-item" onclick="nav('tracker')">
+    <span class="nav-ico">👥</span> Patient Tracker
+  </button>
+
+  <div class="sidebar-foot">
+    <div class="sf-name">Dr. Ahmed Al Saka, PT</div>
+    <div class="sf-role">Orthopedic Physiotherapist</div>
+  </div>
+</nav>
+
+<!-- ── MAIN ── -->
+<main class="main">
+
+<!-- DASHBOARD -->
+<div class="page active" id="page-home">
+  <div class="ph">
+    <div class="ph-eye">Clinical Tools Platform</div>
+    <div class="ph-title">Welcome Back, Dr. Al Saka</div>
+    <div class="ph-sub">Evidence-Based Interactive Tools For Orthopedic Physiotherapy Practice.</div>
+    <div class="ph-line"></div>
+  </div>
+  <div class="dash-stats">
+    <div class="ds-card"><div class="ds-val">10</div><div class="ds-lbl">Clinical Tools</div></div>
+    <div class="ds-card"><div class="ds-val" id="stat-pts">0</div><div class="ds-lbl">Patients Tracked</div></div>
+    <div class="ds-card"><div class="ds-val">EBP</div><div class="ds-lbl">Evidence-Based</div></div>
+  </div>
+  <div class="dash-grid">
+    <div class="tc" style="--tc-c:#dc2626" onclick="nav('acl')">
+      <div class="tc-ico">🦵</div>
+      <div class="tc-name">ACL Rehab Program</div>
+      <div class="tc-desc">Complete 5-Phase Post-Op & Conservative ACL Protocol With Session Tracking And LSI Criteria.</div>
+      <div class="tc-tags">
+        <span class="ttag" style="background:rgba(220,26,26,0.08);color:#dc2626">9 Months</span>
+        <span class="ttag" style="background:rgba(220,26,26,0.08);color:#dc2626">5 Phases</span>
+        <span class="ttag" style="background:rgba(220,26,26,0.08);color:#dc2626">Interactive</span>
+      </div>
+      <button class="tc-btn">Launch →</button>
+    </div>
+    <div class="tc" style="--tc-c:#d97706" onclick="nav('shoulder')">
+      <div class="tc-ico">💪</div>
+      <div class="tc-name">Shoulder Rehab</div>
+      <div class="tc-desc">Rotator cuff & instability rehabilitation — 4 progressive phases from acute protection to full return.</div>
+      <div class="tc-tags">
+        <span class="ttag" style="background:rgba(217,119,6,0.08);color:#d97706">4 Phases</span>
+        <span class="ttag" style="background:rgba(217,119,6,0.08);color:#d97706">RTC Focus</span>
+      </div>
+      <button class="tc-btn">Launch →</button>
+    </div>
+    <div class="tc" style="--tc-c:#4f46e5" onclick="nav('spine')">
+      <div class="tc-ico">🦴</div>
+      <div class="tc-name">Spine Assessment</div>
+      <div class="tc-desc">Structured lumbar & cervical clinical checklist — history, posture, ROM, neuro screen, special tests.</div>
+      <div class="tc-tags">
+        <span class="ttag" style="background:rgba(79,70,229,0.08);color:#4f46e5">Lumbar</span>
+        <span class="ttag" style="background:rgba(79,70,229,0.08);color:#4f46e5">Cervical</span>
+        <span class="ttag" style="background:rgba(79,70,229,0.08);color:#4f46e5">Red Flags</span>
+      </div>
+      <button class="tc-btn">Launch →</button>
+    </div>
+    <div class="tc" style="--tc-c:#16a34a" onclick="nav('library')">
+      <div class="tc-ico">📚</div>
+      <div class="tc-name">Exercise Library</div>
+      <div class="tc-desc">Searchable database of 22+ orthopedic exercises with muscle targets, sets/reps, coaching cues.</div>
+      <div class="tc-tags">
+        <span class="ttag" style="background:rgba(22,163,74,0.08);color:#16a34a">Searchable</span>
+        <span class="ttag" style="background:rgba(22,163,74,0.08);color:#16a34a">Filterable</span>
+      </div>
+      <button class="tc-btn">Launch →</button>
+    </div>
+    <div class="tc" style="--tc-c:#06b6d4" onclick="nav('tracker')">
+      <div class="tc-ico">👥</div>
+      <div class="tc-name">Patient Tracker</div>
+      <div class="tc-desc">Add patients, assign rehab phases, track progress percentages and clinical notes in one view.</div>
+      <div class="tc-tags">
+        <span class="ttag" style="background:rgba(6,182,212,0.08);color:#06b6d4">Progress</span>
+        <span class="ttag" style="background:rgba(6,182,212,0.08);color:#06b6d4">Notes</span>
+      </div>
+      <button class="tc-btn">Launch →</button>
+    </div>
+    <div class="tc" style="--tc-c:#0d9488" onclick="nav('ldhm')">
+      <div class="tc-ico">🧠</div>
+      <div class="tc-name">Lumbar Disc Herniation</div>
+      <div class="tc-desc">McKenzie Approach — directional preference, centralization, 4-phase progressive protocol for LDH & radiculopathy.</div>
+      <div class="tc-tags">
+        <span class="ttag" style="background:rgba(13,148,136,0.08);color:#0d9488">McKenzie</span>
+        <span class="ttag" style="background:rgba(13,148,136,0.08);color:#0d9488">4 Phases</span>
+        <span class="ttag" style="background:rgba(13,148,136,0.08);color:#0d9488">Centralization</span>
+      </div>
+      <button class="tc-btn">Launch →</button>
+    </div>
+    <div class="tc" style="--tc-c:#db2777" onclick="nav('scoliosis')">
+      <div class="tc-ico">🌀</div>
+      <div class="tc-name">Scoliosis — Schroth</div>
+      <div class="tc-desc">Schroth Method PSSE protocol — 3D correction, curve-specific breathing, postural education and home program.</div>
+      <div class="tc-tags">
+        <span class="ttag" style="background:rgba(219,39,119,0.08);color:#db2777">Schroth</span>
+        <span class="ttag" style="background:rgba(219,39,119,0.08);color:#db2777">PSSE</span>
+        <span class="ttag" style="background:rgba(219,39,119,0.08);color:#db2777">3D Correction</span>
+      </div>
+      <button class="tc-btn">Launch →</button>
+    </div>
+    <div class="tc" style="--tc-c:#d97706" onclick="nav('impingement')">
+      <div class="tc-ico">📌</div>
+      <div class="tc-name">Shoulder Impingement</div>
+      <div class="tc-desc">Subacromial impingement syndrome — 4 phases targeting posture, scapular control, RTC strengthening and return to overhead.</div>
+      <div class="tc-tags">
+        <span class="ttag" style="background:rgba(217,119,6,0.08);color:#d97706">Subacromial</span>
+        <span class="ttag" style="background:rgba(217,119,6,0.08);color:#d97706">4 Phases</span>
+        <span class="ttag" style="background:rgba(217,119,6,0.08);color:#d97706">Scapular</span>
+      </div>
+      <button class="tc-btn">Launch →</button>
+    </div>
+    <div class="tc" style="--tc-c:#16a34a" onclick="nav('achilles')">
+      <div class="tc-ico">🦶</div>
+      <div class="tc-name">Achilles Tendinopathy</div>
+      <div class="tc-desc">Alfredson eccentric + HSR protocol — isometric loading through plyometric return to sport for Achilles tendon.</div>
+      <div class="tc-tags">
+        <span class="ttag" style="background:rgba(22,163,74,0.08);color:#16a34a">Eccentric</span>
+        <span class="ttag" style="background:rgba(22,163,74,0.08);color:#16a34a">HSR</span>
+        <span class="ttag" style="background:rgba(22,163,74,0.08);color:#16a34a">VISA-A</span>
+      </div>
+      <button class="tc-btn">Launch →</button>
+    </div>
+    <div class="tc" style="--tc-c:#059669" onclick="nav('patellar')">
+      <div class="tc-ico">🦵</div>
+      <div class="tc-name">Patellar Tendinopathy</div>
+      <div class="tc-desc">Decline squat eccentric + heavy slow resistance — 4-phase protocol for patellar tendon (Jumper's Knee).</div>
+      <div class="tc-tags">
+        <span class="ttag" style="background:rgba(5,150,105,0.08);color:#059669">Decline Squat</span>
+        <span class="ttag" style="background:rgba(5,150,105,0.08);color:#059669">HSR</span>
+        <span class="ttag" style="background:rgba(5,150,105,0.08);color:#059669">VISA-P</span>
+      </div>
+      <button class="tc-btn">Launch →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ACL -->
+<div class="page" id="page-acl"></div>
+
+<!-- SHOULDER -->
+<div class="page" id="page-shoulder"></div>
+
+<!-- SPINE -->
+<div class="page" id="page-spine"></div>
+
+<!-- LIBRARY -->
+<div class="page" id="page-library"></div>
+
+<!-- TRACKER -->
+<div class="page" id="page-tracker"></div>
+
+<!-- LUMBAR DISC HERNIATION McKENZIE -->
+<div class="page" id="page-ldhm"></div>
+
+<!-- SCOLIOSIS SCHROTH -->
+<div class="page" id="page-scoliosis"></div>
+
+<!-- SHOULDER IMPINGEMENT -->
+<div class="page" id="page-impingement"></div>
+
+<!-- ACHILLES TENDINOPATHY -->
+<div class="page" id="page-achilles"></div>
+
+<!-- PATELLAR TENDINOPATHY -->
+<div class="page" id="page-patellar"></div>
+
+</main>
+</div>
+
+<script>
+/* ── PASSWORD LOCK ── */
+const PASS_HASH = '7ff6d9b570b5c9b8d6910c65640cf5cca8b3aa643b0e493874612f46afbb2e92';
+
+async function sha256(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+async function checkPass() {
+  const val = document.getElementById('lock-input').value;
+  const hash = await sha256(val);
+  if (hash === PASS_HASH) {
+    sessionStorage.setItem('pt_auth', '1');
+    document.getElementById('lock-screen').style.display = 'none';
+  } else {
+    const err = document.getElementById('lock-err');
+    err.style.display = 'block';
+    document.getElementById('lock-input').value = '';
+    document.getElementById('lock-input').focus();
+    setTimeout(() => err.style.display = 'none', 3000);
+  }
+}
+
+// Auto-unlock if already authenticated this session
+if (sessionStorage.getItem('pt_auth') === '1') {
+  document.getElementById('lock-screen').style.display = 'none';
+}
+
+/* MOBILE INTERACTION
+════════════════════════════════ */
+function toggleMenu() {
+  const sidebar = document.getElementById("app-sidebar");
+  sidebar.classList.toggle("open");
+}
+
+/* ════════════════════════════════
+   DATA
+════════════════════════════════ */
+const ACL=[
+  {id:1,name:"Acute / Protection",weeks:"Wks 1–2",goal:"Control swelling, restore ROM, activate VMO",color:"#dc2626",rgb:"220,26,26",light:"#dc2626",
+   criteria:"Full passive extension, ≥90° flexion, minimal effusion",
+   ex:[
+    {id:"a1",name:"Quad Sets",sets:"3×10",reps:"10s hold",note:"Supine, towel roll under knee. Key VMO activation."},
+    {id:"a2",name:"Heel Slides",sets:"3×15",reps:"Slow & controlled",note:"Aim ≥90° flexion by end of week 2."},
+    {id:"a3",name:"Straight Leg Raises",sets:"3×15",reps:"4s eccentric",note:"Brace core, no quad lag allowed."},
+    {id:"a4",name:"Ankle Pumps",sets:"5×20",reps:"Continuous",note:"DVT prevention — every 2 hours."},
+    {id:"a5",name:"Patellar Mobilizations",sets:"2×2min",reps:"All directions",note:"Prevent infrapatellar fibrosis."},
+    {id:"a6",name:"RICE Protocol",sets:"4–6×/day",reps:"20 min each",note:"Ice + compression post-exercise."},
+   ],
+   ms:["Ambulate with crutches — WB as tolerated","0° full passive extension achieved","Swelling ≤1+ pitting edema"]},
+  {id:2,name:"Neuromuscular Control",weeks:"Wks 3–6",goal:"Restore gait, quad/hip strength, proprioception",color:"#d97706",rgb:"217,119,6",light:"#d97706",
+   criteria:"Normal gait, single-leg stand 10s, no effusion",
+   ex:[
+    {id:"b1",name:"Minisquats (0–45°)",sets:"3×15",reps:"Slow eccentric",note:"Knee tracks over 2nd toe. Control descent."},
+    {id:"b2",name:"Terminal Knee Extension",sets:"3×20",reps:"Band resisted",note:"Key VMO activation — band behind knee at 20° flex."},
+    {id:"b3",name:"Step-Ups (10cm box)",sets:"3×12",reps:"Lead with involved",note:"Control descent — lead with uninvolved on way down."},
+    {id:"b4",name:"Hip Abduction / Clamshells",sets:"3×15",reps:"Sidelying",note:"Glute med activation — avoid trunk shift."},
+    {id:"b5",name:"Single-Leg Balance",sets:"3×30s",reps:"Eyes open → closed",note:"Progress: stable floor → foam → unstable surface."},
+    {id:"b6",name:"Stationary Bike",sets:"20 min",reps:"Low resistance",note:"Seat: full extension at bottom of pedal stroke."},
+   ],
+   ms:["Wean off crutches — independent gait","Single-leg squat ×10 controlled","Proprioception bilateral symmetry"]},
+  {id:3,name:"Strength & Loading",weeks:"Wks 7–12",goal:"Progressive CKC loading, strength symmetry LSI ≥70%",color:"#16a34a",rgb:"22,163,74",light:"#16a34a",
+   criteria:"LSI ≥70% quad, no pain on loading, full ROM",
+   ex:[
+    {id:"c1",name:"Leg Press (Bilateral→Uni)",sets:"4×10",reps:"Heavy",note:"Progress to single-leg by week 10."},
+    {id:"c2",name:"Romanian Deadlift",sets:"3×10",reps:"Controlled eccentric",note:"Hamstring loading — critical for graft protection."},
+    {id:"c3",name:"Bulgarian Split Squat",sets:"3×8",reps:"Per leg",note:"Rear foot elevated — trunk upright throughout."},
+    {id:"c4",name:"Nordic Hamstring Curl",sets:"3×6",reps:"Eccentric only",note:"Highest evidence for hamstring injury prevention."},
+    {id:"c5",name:"Eccentric Step-Down",sets:"3×12",reps:"3s lowering",note:"Monitor knee valgus — control essential."},
+    {id:"c6",name:"Hip Thrust",sets:"3×12",reps:"Barbell loaded",note:"Posterior chain integration — glute max dominant."},
+   ],
+   ms:["LSI ≥70% on isokinetic dynamometer","Single-leg press 1.5× bodyweight","No effusion post-loading session"]},
+  {id:4,name:"Power & Plyometrics",weeks:"Wks 13–20",goal:"Explosive power, landing mechanics, sport readiness",color:"#4f46e5",rgb:"79,70,229",light:"#4f46e5",
+   criteria:"LSI ≥85% quad, hop test ≥90%, pain-free plyometrics",
+   ex:[
+    {id:"d1",name:"Double-Leg Box Jump",sets:"4×6",reps:"Stick landing 2s",note:"Soft landing: simultaneous hip/knee/ankle flexion."},
+    {id:"d2",name:"Single-Leg Hop (4 tests)",sets:"3 trials",reps:"Max effort",note:"Single, triple, 6m timed, crossover hop."},
+    {id:"d3",name:"Lateral Bounds",sets:"3×8",reps:"Per direction",note:"Stick each landing — no knee valgus."},
+    {id:"d4",name:"Depth Drop → Jump",sets:"4×5",reps:"30cm box",note:"Ground contact time target <0.25s."},
+    {id:"d5",name:"Reactive Agility Drills",sets:"5×",reps:"10m",note:"5-10-5 shuttle, T-drill, pro-agility."},
+    {id:"d6",name:"Sprint Progressions",sets:"Gradaded",reps:"50→75→100%",note:"Straight-line first — add COD when cleared."},
+   ],
+   ms:["Hop LSI ≥90% all 4 tests","Peak quad torque LSI ≥85% isokinetic","H:Q ratio ≥0.6 at 60°/s"]},
+  {id:5,name:"Return to Sport",weeks:"Mo 6–9+",goal:"Sport-specific loading, psych readiness, RTS clearance",color:"#06b6d4",rgb:"6,182,212",light:"#06b6d4",
+   criteria:"LSI ≥90%, ACL-RSI ≥56, physician clearance",
+   ex:[
+    {id:"e1",name:"Sport-Specific Drills",sets:"Full session",reps:"Position-specific",note:"Non-contact → modified contact → full contact."},
+    {id:"e2",name:"Team Training Integration",sets:"Graduated",reps:"Modified → full",note:"Monitor with GPS / session RPE."},
+    {id:"e3",name:"Psychological Readiness",sets:"Ongoing",reps:"ACL-RSI scale",note:"Screen fear of reinjury every phase."},
+    {id:"e4",name:"Maintenance Strength",sets:"2×/week",reps:"Full program",note:"Nordic hamstring curls — lifelong protocol."},
+    {id:"e5",name:"FIFA 11+ Warm-Up",sets:"Each session",reps:"Full protocol",note:"Evidence-based ACL injury prevention."},
+    {id:"e6",name:"Isokinetic Retest",sets:"1 session",reps:"60°/s & 180°/s",note:"Final bilateral clearance criterion."},
+   ],
+   ms:["Full team training ×4 consecutive weeks","Physician + PT joint bilateral clearance","ACL-RSI ≥56/100"]},
+];
+
+const SHOULDER=[
+  {id:1,name:"Acute Protection",weeks:"Wks 1–3",goal:"Pain control, protect repair, passive ROM",color:"#dc2626",rgb:"220,26,26",light:"#dc2626",
+   criteria:"Full passive ROM, pain ≤2/10, no active RTC contraction",
+   ex:[
+    {id:"s1",name:"Pendulum Exercises",sets:"3×1min",reps:"Gravity-assisted",note:"NO active shoulder muscles — arm hangs freely."},
+    {id:"s2",name:"Passive ER / IR",sets:"3×10",reps:"Pain-free range",note:"Wand-assisted or therapist-assisted only."},
+    {id:"s3",name:"Elbow / Wrist AROM",sets:"3×10",reps:"Full range",note:"Prevent distal joint stiffness during immobilization."},
+    {id:"s4",name:"Scapular Setting",sets:"3×10",reps:"5s hold",note:"Light retraction/depression — avoid shoulder shrug."},
+    {id:"s5",name:"Ice Therapy",sets:"4–6×/day",reps:"15–20 min",note:"Post-exercise and PRN for pain control."},
+   ],
+   ms:["Full passive ER/IR in pain-free range","Pain ≤2/10 at rest and light activity","Sling compliance maintained per protocol"]},
+  {id:2,name:"Active Assisted ROM",weeks:"Wks 4–6",goal:"Restore AROM, begin RTC activation",color:"#d97706",rgb:"217,119,6",light:"#d97706",
+   criteria:"AROM ≥140° flexion, ER ≥45°, MMT RTC ≥3/5",
+   ex:[
+    {id:"s6",name:"Pulleys — Shoulder Flexion",sets:"3×15",reps:"AAROM",note:"Uninvolved arm assists — progress to tolerance."},
+    {id:"s7",name:"Supine ER with Wand",sets:"3×10",reps:"Slow controlled",note:"Elbow at 0° abd — protect repair."},
+    {id:"s8",name:"Side-Lying ER",sets:"3×12",reps:"No weight",note:"Isolates infraspinatus / teres minor."},
+    {id:"s9",name:"Prone Y / T / W",sets:"3×10",reps:"Bodyweight only",note:"Scapular stabilizers — control, no neck tension."},
+    {id:"s10",name:"Rhythmic Stabilization",sets:"3×30s",reps:"PNF patterns",note:"Therapist-applied perturbations — co-contraction."},
+   ],
+   ms:["AROM ≥140° shoulder flexion","ER ≥45° at 0° abduction","Wean from sling successfully"]},
+  {id:3,name:"Strength & Function",weeks:"Wks 7–12",goal:"Progressive RTC and scapular strengthening",color:"#16a34a",rgb:"22,163,74",light:"#16a34a",
+   criteria:"MMT ≥4/5 all RTC, full AROM, no impingement signs",
+   ex:[
+    {id:"s11",name:"Theraband ER / IR",sets:"3×15",reps:"Band resistance",note:"90° range at 0°, 45°, 90° abduction positions."},
+    {id:"s12",name:"Dumbbell Lateral Raise",sets:"3×12",reps:"Light → moderate",note:"Elevate to 90° only — avoid impingement arc."},
+    {id:"s13",name:"Prone Row",sets:"3×12",reps:"Dumbbell",note:"Retract scapula at top — rhomboids / mid-trap."},
+    {id:"s14",name:"Push-Up Plus",sets:"3×10",reps:"Serratus anterior",note:"Add protraction at top — crucial scapular upward rotation."},
+    {id:"s15",name:"D2 Flexion PNF",sets:"3×10",reps:"Diagonal pattern",note:"Sport-specific movement integration pattern."},
+   ],
+   ms:["MMT ≥4/5 all rotator cuff muscles","Full pain-free active ROM","Neer and Hawkins signs negative"]},
+  {id:4,name:"Return to Activity",weeks:"Wks 13–20",goal:"Power, overhead loading, full functional clearance",color:"#4f46e5",rgb:"79,70,229",light:"#4f46e5",
+   criteria:"MMT 5/5, DASH <20, sport-specific pain-free function",
+   ex:[
+    {id:"s16",name:"Overhead Press Progression",sets:"4×10",reps:"DB → Barbell",note:"Begin seated — progress to standing."},
+    {id:"s17",name:"Plyometric Ball Work",sets:"3×10",reps:"Chest / overhead",note:"Wall throws — rapid eccentric RTC loading."},
+    {id:"s18",name:"Sport-Specific Drills",sets:"Graduated",reps:"Full intensity",note:"Throwing, overhead, contact progressions."},
+    {id:"s19",name:"Maintenance Program",sets:"2×/week",reps:"Full protocol",note:"Preventive RTC work — lifelong for overhead athletes."},
+   ],
+   ms:["DASH score <20/100","Isokinetic ER:IR ratio ≥66%","Full sport / work clearance granted"]},
+];
+
+const PRECAUTIONS=[
+  {ico:"⚠️",txt:"Avoid open kinetic chain knee extension 0–60° until Week 12+ (graft stress zone)"},
+  {ico:"🚫",txt:"No contact sports before 9 months — ligamentization (graft remodeling) is not complete"},
+  {ico:"❄️",txt:"Ice + elevation 20 min after every session for the first 8 weeks"},
+  {ico:"📊",txt:"Use LSI (Limb Symmetry Index) — never time alone — for all return-to-sport decisions"},
+];
+const OUTCOMES=[
+  ["LSI","Limb Symmetry Index — quad strength via isokinetic dynamometer"],
+  ["ACL-RSI","Return to Sport after Injury scale — psychological readiness (0–100)"],
+  ["IKDC","International Knee Documentation Committee — subjective knee function"],
+  ["Hop Tests","Single, triple, 6m timed, crossover — functional symmetry ≥90%"],
+];
+
+const SPINE_SECS=[
+  {title:"🔍 History & Onset",items:["Mechanism clear (trauma / insidious)","Radicular vs. central pain pattern","Night pain / constitutional symptoms","Bladder / bowel dysfunction (cauda equina flag)","Previous spine surgery or imaging"]},
+  {title:"📐 Posture & Alignment",items:["Lateral shift present","Lumbar lordosis — reduced / increased / normal","Pelvic tilt — anterior / posterior / neutral","Thoracic kyphosis assessment","Head position — forward / neutral"]},
+  {title:"📏 Range of Motion",items:["Flexion — full / limited / pain provocation","Extension — full / limited / centralizes / peripheralizes","Lateral flexion Left","Lateral flexion Right","Rotation — symmetric / asymmetric"]},
+  {title:"⚡ Neurological Screen",items:["SLR positive (L4–S1 nerve roots)","Femoral nerve stretch (L2–L4)","Dermatome sensation deficit","Myotome weakness detected","Reflexes — patellar / Achilles — symmetric"]},
+  {title:"🤲 Special Tests",items:["Kemp's Test (facet / foraminal)","Slump Test (neural tension)","FABER / FADIR (hip differentiation)","Prone instability test","Centralization response (McKenzie)"]},
+  {title:"💪 Muscle Function",items:["Core endurance — plank hold >60s","Gluteal activation — side-lying test","Hip flexor tightness (Thomas test)","Hamstring flexibility — AKE <20° deficit","Lateral trunk endurance — symmetric"]},
+];
+
+const EXLIB=[
+  {name:"Quad Set",cat:"Knee",cc:"#dc2626",cb:"rgba(220,26,26,0.08)",muscle:"Quadriceps (VMO)",sets:"3×10",reps:"10s isometric hold",note:"Foundational VMO activation. Towel roll under knee at 20° flex.",tags:["Isometric","Post-op","Week 1+","Low load"]},
+  {name:"Straight Leg Raise",cat:"Knee",cc:"#dc2626",cb:"rgba(220,26,26,0.08)",muscle:"Quadriceps / Hip Flexors",sets:"3×15",reps:"4s eccentric",note:"No quad lag — brace core first, maintain full knee extension.",tags:["OKC","Early rehab","Hip flexor"]},
+  {name:"Terminal Knee Extension",cat:"Knee",cc:"#dc2626",cb:"rgba(220,26,26,0.08)",muscle:"VMO / Quadriceps",sets:"3×20",reps:"Band resisted",note:"Band behind knee at ~20° flex. CKC VMO activation. ACL cornerstone.",tags:["CKC","Band","VMO","ACL"]},
+  {name:"Nordic Hamstring Curl",cat:"Knee",cc:"#dc2626",cb:"rgba(220,26,26,0.08)",muscle:"Hamstrings (Biceps Femoris)",sets:"3×6",reps:"Eccentric only",note:"Highest evidence for hamstring injury prevention. Partner anchors ankles.",tags:["Eccentric","Prevention","High load","Phase 3+"]},
+  {name:"Bulgarian Split Squat",cat:"Knee",cc:"#dc2626",cb:"rgba(220,26,26,0.08)",muscle:"Quads / Glutes / Hip Flexors",sets:"3×8",reps:"Per leg",note:"Rear foot elevated. Trunk upright. High unilateral demand.",tags:["Unilateral","Late stage","Phase 3+"]},
+  {name:"Side-Lying External Rotation",cat:"Shoulder",cc:"#d97706",cb:"rgba(217,119,6,0.08)",muscle:"Infraspinatus / Teres Minor",sets:"3×12",reps:"0.5–2kg dumbbell",note:"Elbow at 90°, towel under arm. Isolates ER muscles.",tags:["RTC","Isolation","Early strength"]},
+  {name:"Prone Y T W",cat:"Shoulder",cc:"#d97706",cb:"rgba(217,119,6,0.08)",muscle:"Lower / Mid Trapezius, Serratus",sets:"3×10",reps:"BW → light dumbbell",note:"Scapular stabilizer protocol. Control movement, avoid neck tension.",tags:["Scapular","Stability","Trapezius"]},
+  {name:"Pendulum Exercise",cat:"Shoulder",cc:"#d97706",cb:"rgba(217,119,6,0.08)",muscle:"Passive shoulder mobilization",sets:"3×1min",reps:"Gravity-assisted circles",note:"NO active shoulder muscles. Let arm hang freely. Acute post-surgical.",tags:["Passive","Post-op","Week 1"]},
+  {name:"Push-Up Plus",cat:"Shoulder",cc:"#d97706",cb:"rgba(217,119,6,0.08)",muscle:"Serratus Anterior",sets:"3×10",reps:"Add protraction at top",note:"Critical for scapular upward rotation. Prevents winging.",tags:["Serratus","Scapular","Functional"]},
+  {name:"Posterior Pelvic Tilt",cat:"Spine",cc:"#4f46e5",cb:"rgba(79,70,229,0.08)",muscle:"Deep Abdominals / Glutes",sets:"3×10",reps:"10s hold",note:"Supine. Flatten lumbar spine. Activate deep core. Foundation for all spine rehab.",tags:["Core","Lumbar","Foundation"]},
+  {name:"Bird Dog",cat:"Spine",cc:"#4f46e5",cb:"rgba(79,70,229,0.08)",muscle:"Erector Spinae / Glutes / Core",sets:"3×8",reps:"10s hold per side",note:"Maintain neutral spine. Avoid lumbar extension. McGill Big 3.",tags:["Core","Stability","McGill"]},
+  {name:"Dead Bug",cat:"Spine",cc:"#4f46e5",cb:"rgba(79,70,229,0.08)",muscle:"Transversus Abdominis",sets:"3×8",reps:"Per side, controlled",note:"Press lumbar into floor. Opposite arm-leg extension. Anti-extension.",tags:["Core","Anti-extension","McGill"]},
+  {name:"Side Plank",cat:"Spine",cc:"#4f46e5",cb:"rgba(79,70,229,0.08)",muscle:"QL / Obliques / Glutes",sets:"3×30s",reps:"Each side",note:"Full-body alignment. Progress: knees → feet → top leg raised. McGill Big 3.",tags:["Core","Anti-lateral","McGill","QL"]},
+  {name:"McGill Curl-Up",cat:"Spine",cc:"#4f46e5",cb:"rgba(79,70,229,0.08)",muscle:"Rectus Abdominis / Core",sets:"3×10",reps:"10s hold",note:"Hands under lumbar. Partial curl — maintain neutral. Spine-safe alternative.",tags:["Core","Flexion","McGill","Safe"]},
+  {name:"Hip Thrust",cat:"Hip & Glute",cc:"#16a34a",cb:"rgba(22,163,74,0.08)",muscle:"Gluteus Maximus",sets:"3×12",reps:"Barbell / BW",note:"Shoulders on bench. Full hip extension at top. Highest glute max EMG activation.",tags:["Glute","Power","Loading"]},
+  {name:"Clamshell",cat:"Hip & Glute",cc:"#16a34a",cb:"rgba(22,163,74,0.08)",muscle:"Gluteus Medius",sets:"3×15",reps:"Sidelying, band above knees",note:"Essential for knee valgus control. Progress with resistance band.",tags:["Glute med","Band","Knee control"]},
+  {name:"Romanian Deadlift",cat:"Hip & Glute",cc:"#16a34a",cb:"rgba(22,163,74,0.08)",muscle:"Hamstrings / Glutes",sets:"3×10",reps:"Hip hinge, controlled",note:"Neutral spine throughout. Eccentric focus. Key for ACL graft protection.",tags:["Hamstrings","Eccentric","Loading"]},
+  {name:"Lateral Band Walk",cat:"Hip & Glute",cc:"#16a34a",cb:"rgba(22,163,74,0.08)",muscle:"Gluteus Medius / TFL",sets:"3×15",reps:"Steps each direction",note:"Band above ankles or knees. Slight squat position. Knees over toes.",tags:["Glute med","Band","Activation"]},
+  {name:"Single-Leg Balance",cat:"Proprioception",cc:"#06b6d4",cb:"rgba(6,182,212,0.08)",muscle:"Peroneals / Ankle / Core",sets:"3×30s",reps:"Eyes open → closed",note:"Progress: stable → foam → trampoline → perturbations. Key ACL / ankle tool.",tags:["Balance","Proprioception","Functional"]},
+  {name:"Box Jump",cat:"Plyometrics",cc:"#db2777",cb:"rgba(219,39,119,0.08)",muscle:"Quads / Glutes / Calves",sets:"4×6",reps:"Stick landing 2s",note:"Land soft: simultaneous hip/knee/ankle flex. Listen for quiet landing. Phase 4+ only.",tags:["Power","Phase 4+","Landing mechanics"]},
+  {name:"Depth Drop",cat:"Plyometrics",cc:"#db2777",cb:"rgba(219,39,119,0.08)",muscle:"Quads / Hamstrings / Glutes",sets:"4×5",reps:"30cm box",note:"Step off (don't jump). Absorb with bilateral hip/knee flex. GCT target <0.25s.",tags:["Plyometric","Landing","Phase 4+"]},
+  {name:"Ankle Alphabet",cat:"Ankle",cc:"#db2777",cb:"rgba(219,39,119,0.08)",muscle:"Peroneals / Tibialis Anterior",sets:"3 rounds",reps:"Full alphabet",note:"Non-weight bearing. Active ROM in all planes. Acute ankle sprain phase 1.",tags:["AROM","Ankle","Acute"]},
+];
+
+const CATS=["All","Knee","Shoulder","Spine","Hip & Glute","Proprioception","Plyometrics","Ankle"];
+
+/* ── LUMBAR DISC HERNIATION — McKENZIE DATA ── */
+const LDHM=[
+  {id:1,name:"Acute Pain Control",weeks:"Wks 1–2",goal:"Reduce pain, establish directional preference, protect neural tissue",color:"#0d9488",rgb:"13,148,136",light:"#0d9488",
+   criteria:"Pain centralized or abolished, directional preference established, <5/10 NRS",
+   ex:[
+    {id:"lm1",name:"McKenzie Extension in Lying (EIL)",sets:"10 reps/2h",reps:"End-range press-up",note:"Key centralizing movement for posterior disc herniation. Stop if pain peripheralizes."},
+    {id:"lm2",name:"Prone Lying Positioning",sets:"5–10 min",reps:"Every 2 hours",note:"Gravity-assisted extension. First step if patient cannot tolerate EIL."},
+    {id:"lm3",name:"Repeated Lumbar Extension in Standing",sets:"10 reps/2h",reps:"Hands on low back",note:"Use when prone not feasible. Monitor centralization response carefully."},
+    {id:"lm4",name:"Lateral Shift Correction (if present)",sets:"3×10",reps:"Manual or self-correction",note:"Correct shift FIRST before extension — shift blocks centralization."},
+    {id:"lm5",name:"Neural Flossing — SLR Slump",sets:"3×10",reps:"Ankle DF + knee ext",note:"Gentle nerve mobilization. Stop if sharp radicular pain increases."},
+    {id:"lm6",name:"Posture Education — Lordosis Support",sets:"All ADLs",reps:"Lumbar roll in sitting",note:"Maintain lordosis in sitting at all times. Correct flexion posture habit."},
+   ],
+   ms:["Centralization or abolition of leg pain","Directional preference clearly established","Patient understands posture correction principles"]},
+  {id:2,name:"Mechanical Loading",weeks:"Wks 3–4",goal:"Load disc progressively, restore lumbar ROM, reduce flexion intolerance",color:"#0891b2",rgb:"8,145,178",light:"#0891b2",
+   criteria:"No radicular symptoms, flexion improving, active extension full range",
+   ex:[
+    {id:"lm7",name:"McKenzie Extension in Standing (EIS)",sets:"10 reps ×4/day",reps:"Hands on hips, end range",note:"Progress from prone to standing extension. Maintain centralization."},
+    {id:"lm8",name:"Active Lumbar Flexion in Lying",sets:"3×10",reps:"Knees to chest",note:"ONLY introduce when extension has fully centralized. Gradual progression."},
+    {id:"lm9",name:"Posterior Pelvic Tilt",sets:"3×10",reps:"10s hold, supine",note:"Flatten lumbar — deep core activation. Foundation for all spine loading."},
+    {id:"lm10",name:"Abdominal Bracing (TA draw-in)",sets:"3×10",reps:"10s hold, neutral spine",note:"Transversus abdominis activation — spine stabilization before loading."},
+    {id:"lm11",name:"Prone Hip Extension",sets:"3×12",reps:"Alternating legs",note:"Gluteal + erector activation. Keep lumbar neutral — no hyperlordosis."},
+    {id:"lm12",name:"Walking Program",sets:"20–30 min",reps:"Flat surface",note:"Extension-biased activity. Reduces disc pressure vs. sitting. Start short intervals."},
+   ],
+   ms:["Full active lumbar extension — pain-free","Flexion to 50% range without peripheralization","Independent in home exercise program"]},
+  {id:3,name:"Stabilization & Strength",weeks:"Wks 5–8",goal:"McGill core stability, neural control, functional strength",color:"#0284c7",rgb:"2,132,199",light:"#0284c7",
+   criteria:"No radicular symptoms, core endurance targets met, return to ADLs",
+   ex:[
+    {id:"lm13",name:"Bird Dog",sets:"3×8",reps:"10s hold per side",note:"McGill Big 3. Maintain neutral spine — NO lumbar extension. Opposite arm-leg."},
+    {id:"lm14",name:"McGill Curl-Up",sets:"3×10",reps:"10s hold",note:"Hands under lumbar — partial curl. Spine-safe alternative to full sit-up."},
+    {id:"lm15",name:"Side Plank",sets:"3×20–30s",reps:"Each side",note:"Anti-lateral flexion. Progress: knees → feet → star position."},
+    {id:"lm16",name:"Deadlift — Hip Hinge Pattern",sets:"3×10",reps:"BW → light load",note:"Teach neutral spine hip hinge. Fundamental movement for disc patients."},
+    {id:"lm17",name:"Romanian Deadlift",sets:"3×10",reps:"Controlled eccentric",note:"Hamstring loading with neutral lumbar. Progress load as tolerated."},
+    {id:"lm18",name:"Plank (Prone)",sets:"3×30–60s",reps:"Neutral spine",note:"McGill Big 3. Do NOT allow lumbar sagging — core throughout."},
+   ],
+   ms:["Plank >60s, Side plank >45s, Curl-up ×10 pain-free","Hip hinge with correct technique","Return to sedentary work / light daily activities"]},
+  {id:4,name:"Functional Return",weeks:"Wks 9–16",goal:"Return to work, sport, heavy lifting — long-term self-management",color:"#7c3aed",rgb:"124,58,237",light:"#7c3aed",
+   criteria:"PSFS ≥7/10, ODI <20%, full return to pre-injury activities",
+   ex:[
+    {id:"lm19",name:"Loaded Hip Hinge / Deadlift",sets:"4×8",reps:"Progressive loading",note:"Structured return to heavy loading. Monitor NRS after each session."},
+    {id:"lm20",name:"Functional Squat Progressions",sets:"3×10",reps:"BW → loaded",note:"Spine-neutral throughout. Avoid butt-wink (lumbar flexion at bottom)."},
+    {id:"lm21",name:"Work Simulation Tasks",sets:"Per demand",reps:"Occupation-specific",note:"Lifting, bending, carrying — match patient's job / sport demands."},
+    {id:"lm22",name:"Self-Treatment Review",sets:"Ongoing",reps:"PRN flare-up",note:"Patient can independently manage future episodes with McKenzie self-treatment."},
+    {id:"lm23",name:"Return-to-Sport Drills",sets:"Graduated",reps:"Intensity progression",note:"Introduce sport-specific loading patterns. Spine-neutral priority."},
+   ],
+   ms:["ODI <20% (minimal disability)","PSFS ≥7/10 on key functional activities","Independent self-management strategy for recurrence"]},
+];
+const LDHM_PREC=[
+  {ico:"🚨",txt:"Immediate RED FLAG referral: bilateral leg symptoms, saddle anesthesia, bladder/bowel dysfunction (Cauda Equina Syndrome)"},
+  {ico:"⚠️",txt:"STOP if peripheralization occurs — pain spreading distal indicates neural stress; regress to last pain-free direction"},
+  {ico:"🚫",txt:"Avoid sustained flexion postures (sitting slouched, bending) during acute phase — increases disc pressure up to 300%"},
+  {ico:"📋",txt:"Re-assess directional preference every session — flexion intolerance can shift to extension intolerance over time"},
+];
+const LDHM_OUT=[
+  ["NRS","Numeric Rating Scale 0–10 — pain intensity before/after each McKenzie session"],
+  ["ODI","Oswestry Disability Index — functional limitation (target <20% = minimal disability)"],
+  ["PSFS","Patient-Specific Functional Scale — 3 personal goals rated 0–10"],
+  ["Centralization","Pain moves from periphery → center with repeated movement — key McKenzie outcome predictor"],
+];
+
+/* ── SCOLIOSIS — SCHROTH DATA ── */
+const SCOLIOSIS=[
+  {id:1,name:"Assessment & Postural Correction",weeks:"Wks 1–4",goal:"Cobb angle baseline, curve pattern ID, 3D correction awareness",color:"#db2777",rgb:"219,39,119",light:"#db2777",
+   criteria:"Patient identifies own curve pattern, corrects posture actively, ≥80% home exercise compliance",
+   ex:[
+    {id:"sc1",name:"Schroth Postural Correction",sets:"All day",reps:"Auto-grow & derotation",note:"Auto-elongation (grow tall) + shoulder-pelvis derotation. Foundation of all Schroth work."},
+    {id:"sc2",name:"Muscle Cylinder Breathing (Rotational Angular Breathing)",sets:"3×10 breaths",reps:"RAB into concave side",note:"Breathe INTO the concave / collapsed side only. Core Schroth technique."},
+    {id:"sc3",name:"Pelvic Correction — Sitting / Standing",sets:"Hourly reminders",reps:"Level pelvis correction",note:"Correct pelvic obliquity in all ADL positions. Mirror or video feedback recommended."},
+    {id:"sc4",name:"Mirror Feedback Postural Training",sets:"10–15 min/day",reps:"Frontal + sagittal plane",note:"Visual biofeedback is essential — patient must SEE their own correction."},
+    {id:"sc5",name:"Scoliosis Sleep Positioning",sets:"Nightly",reps:"Curve-specific pillow positioning",note:"Position to reduce lateral curve during sleep. Educate on mattress firmness."},
+   ],
+   ms:["Patient identifies curve as 3-curve or 4-curve pattern","Can demonstrate auto-elongation independently","Understand relationship between breathing and curve correction"]},
+  {id:2,name:"Muscle Activation & De-rotation",weeks:"Wks 5–10",goal:"Activate concave-side muscles, derotate vertebral segments, 3D postural control",color:"#be185d",rgb:"190,24,93",light:"#be185d",
+   criteria:"Sustained correction >30s, RAB technique independent, Cobb angle stable",
+   ex:[
+    {id:"sc6",name:"Prone Schroth Exercise — Muscle Activation",sets:"3×10",reps:"5–10s hold per rep",note:"Activate erectors on convex side + abdominals on concave side simultaneously."},
+    {id:"sc7",name:"Side-lying Derotation (Concave down)",sets:"3×10",reps:"Gravity-assisted derotation",note:"Lateral stretch of convex rib hump. RAB breathing into concave side in this position."},
+    {id:"sc8",name:"Arch with Derotation",sets:"3×8",reps:"Curve-specific variation",note:"Classic Schroth — auto-elongation + derotation + RAB. Must be taught individually."},
+    {id:"sc9",name:"Wall-Supported Correction",sets:"3×30s",reps:"Maintain 3D correction",note:"Back against wall. Maintain corrected position while breathing. Progress hold time."},
+    {id:"sc10",name:"Swimming / Aquatic Schroth",sets:"30 min",reps:"2–3×/week",note:"Horizontal position reduces gravitational load. Backstroke preferred for thoracic curves."},
+   ],
+   ms:["Maintains corrected posture for 60s independently","RAB reliably produces visible rib expansion on concave side","Cobb angle stable on follow-up X-ray (6 months)"]},
+  {id:3,name:"Strengthening & Endurance",weeks:"Wks 11–20",goal:"Build spinal muscle endurance, integrate correction into daily movement",color:"#9333ea",rgb:"147,51,234",light:"#9333ea",
+   criteria:"Full home program independent, postural endurance >2hrs, school/work fully integrated",
+   ex:[
+    {id:"sc11",name:"Schroth Sit-Stand Transitions",sets:"3×10",reps:"From corrected sitting → standing",note:"Maintain 3D correction during transitions — highest risk for collapse."},
+    {id:"sc12",name:"Muscle Endurance — Corrected Walking",sets:"20–30 min",reps:"Maintain auto-elongation",note:"Walk tall — integrate correction. Nordic walking poles useful for thoracic curve patterns."},
+    {id:"sc13",name:"Cat-Camel with Lateral Flexion",sets:"3×10",reps:"Curve-specific direction",note:"Lateral component added — concave side elongation. Not standard cat-camel."},
+    {id:"sc14",name:"Core Strengthening in Corrected Position",sets:"3×10",reps:"Plank / side plank modified",note:"Must maintain 3D correction during all core exercises — not standard neutral spine."},
+    {id:"sc15",name:"Schroth Home Exercise Program",sets:"Daily 45–60 min",reps:"Full individualized program",note:"HEP compliance is the strongest predictor of curve stabilization. Weekly supervision."},
+   ],
+   ms:["Exercises daily for 45+ min independently","Postural correction maintained during school/work for 2+ hours","Cobb angle stable or reduced at 12-month review"]},
+];
+const SCOL_PREC=[
+  {ico:"📐",txt:"Always establish baseline Cobb angle on full-length standing X-ray (EOS or Scoliosis series) before starting PSSE"},
+  {ico:"🚨",txt:"Refer to spine surgeon if Cobb >45–50° (skeletally immature) or >50° (adult) — surgical threshold, PSSE alone insufficient"},
+  {ico:"⚠️",txt:"ALL Schroth exercises must be individually prescribed — there is NO generic scoliosis exercise program; patterns differ for each patient"},
+  {ico:"📋",txt:"Monitor Risser sign and skeletal maturity (bone age) — highest progression risk during adolescent growth spurt"},
+];
+const SCOL_OUT=[
+  ["Cobb Angle","Gold standard — angle of scoliotic curve on X-ray. Target: stabilization or reduction <5°/year"],
+  ["ATR","Angle of Trunk Rotation (Scoliometer) — ≥7° indicates significant deformity. Monitor at each session"],
+  ["SRS-22","Scoliosis Research Society questionnaire — QOL in 5 domains. Tracks patient-reported outcomes"],
+  ["Risser Sign","Skeletal maturity indicator (0–5). Risser 0–2 = high curve progression risk during growth spurt"],
+];
+
+/* ── SHOULDER IMPINGEMENT DATA ── */
+const IMPINGEMENT=[
+  {id:1,name:"Pain Control & Posture",weeks:"Wks 1–3",goal:"Reduce subacromial pain, correct posture, restore pain-free ROM",color:"#d97706",rgb:"217,119,6",light:"#d97706",
+   criteria:"NRS ≤3/10 with daily activities, forward head / rounded shoulder corrected, pain-free passive ROM",
+   ex:[
+    {id:"im1",name:"Posterior Capsule Stretch — Sleeper Stretch",sets:"3×30s",reps:"Each side",note:"Side-lying, involved side down. Gently push forearm toward floor. Key for shoulder IR."},
+    {id:"im2",name:"Scapular Retraction / Depression",sets:"3×15",reps:"5s hold",note:"Squeeze shoulder blades down and back. Counteracts protracted scapula posture."},
+    {id:"im3",name:"Chin Tucks — Cervical Retraction",sets:"3×10",reps:"10s hold",note:"Correct forward head posture. Reduces upper trap overactivation and impingement arc."},
+    {id:"im4",name:"Pendulum Exercises",sets:"3×1min",reps:"Gravity-assisted",note:"Passive distraction reduces subacromial contact. NO active shoulder muscles."},
+    {id:"im5",name:"NSAID / Ice Protocol",sets:"Post-exercise",reps:"15–20 min ice",note:"Subacromial bursa management. Ice superior to heat in acute phase."},
+    {id:"im6",name:"Postural Taping / KT Tape",sets:"48–72h wear",reps:"Scapular facilitation",note:"Scapular facilitation tape — elevates acromion, reduces subacromial contact pressure."},
+   ],
+   ms:["NRS ≤3/10 during ADLs","Corrected resting scapular position","Full passive ROM shoulder flexion and ER"]},
+  {id:2,name:"Scapular Control",weeks:"Wks 4–7",goal:"Scapular stabilizer activation, restore upward rotation, reduce impingement arc",color:"#b45309",rgb:"180,83,9",light:"#b45309",
+   criteria:"Scapular dyskinesis resolved, negative Scapular Assistance Test, MMT lower trap ≥3+/5",
+   ex:[
+    {id:"im7",name:"Prone Y — Lower Trapezius",sets:"3×12",reps:"Thumbs up, no shoulder elevation",note:"Lower trap isolated. Crucial for upward rotation force couple. No neck tension."},
+    {id:"im8",name:"Prone T — Mid Trapezius",sets:"3×12",reps:"Arms at 90° abduction",note:"Horizontal abduction. Retraction component. Combines with Y for balanced trap activation."},
+    {id:"im9",name:"Serratus Anterior Wall Slides",sets:"3×10",reps:"Arms slide up wall",note:"Serratus anterior — scapular upward rotation and protraction. CRITICAL for impingement."},
+    {id:"im10",name:"Theraband ER at 0° Abduction",sets:"3×15",reps:"Elbow at side",note:"Infraspinatus / teres minor. Depresses humeral head — directly reduces impingement."},
+    {id:"im11",name:"Diagonal Pattern (PNF D2 Flexion)",sets:"3×10",reps:"Full diagonal",note:"Integrates RTC + scapular stabilizers in functional pattern. Prepares for overhead."},
+   ],
+   ms:["Scapular Assistance Test negative (impingement resolves with scapular assistance)","MMT lower trapezius ≥4/5","Active elevation to 120° without pain or catching"]},
+  {id:3,name:"RTC Strengthening",weeks:"Wks 8–12",goal:"Full RTC strength, pain-free overhead, scapulohumeral rhythm restored",color:"#92400e",rgb:"146,64,14",light:"#92400e",
+   criteria:"MMT RTC 4/5 all directions, ≤1/10 NRS overhead, Hawkins-Kennedy negative",
+   ex:[
+    {id:"im12",name:"Sidelying ER with Dumbbell",sets:"3×12",reps:"Light → moderate load",note:"Full arc ER in pain-free range. Towel under arm — avoid internal rotation compensation."},
+    {id:"im13",name:"Dumbbell Lateral Raise",sets:"3×12",reps:"To 90° only",note:"Avoid impingement arc (60–120° is DANGEROUS in early phase). Thumbs up position."},
+    {id:"im14",name:"Full Can — Scapular Plane",sets:"3×12",reps:"Thumbs up, 30° anterior",note:"Highest supraspinatus EMG with lowest impingement force. Scapular plane (30° forward)."},
+    {id:"im15",name:"Prone Row — Horizontal Abduction",sets:"3×10",reps:"Dumbbell",note:"Posterior deltoid + RTC. Horizontal abduction with ER component."},
+    {id:"im16",name:"Isometric Shoulder Exercises",sets:"3×10",reps:"10s holds all directions",note:"Early loading if dynamic exercises painful. F/Ext/ER/IR/Abd — against wall or door frame."},
+   ],
+   ms:["MMT RTC ≥4/5 all planes","Hawkins-Kennedy and Neer tests negative","Full overhead reach without pain or catching sensation"]},
+  {id:4,name:"Return to Overhead",weeks:"Wks 13–20",goal:"Full overhead loading, sport/work return, prevent recurrence",color:"#d97706",rgb:"217,119,6",light:"#d97706",
+   criteria:"DASH <20, MMT 5/5, pain-free sport/work overhead activities",
+   ex:[
+    {id:"im17",name:"Overhead Press Progression",sets:"4×10",reps:"DB seated → standing → barbell",note:"Begin seated. Progress slowly — monitor NRS in impingement arc."},
+    {id:"im18",name:"Pull-Down / Lat Pulldown",sets:"3×12",reps:"Wide grip, scapular set first",note:"Depress and retract scapula BEFORE pulling. Prevents upper trap dominance."},
+    {id:"im19",name:"Throwing / Overhead Sport Progression",sets:"Graduated",reps:"Distance + velocity",note:"Return-to-throwing program: interval program (Wilk protocol) for throwers."},
+    {id:"im20",name:"Maintenance Program",sets:"2×/week",reps:"RTC + scapular focus",note:"Prevent recurrence — lower trap, serratus, and RTC ER maintenance is lifelong."},
+   ],
+   ms:["DASH score <20/100","PSFS ≥8/10 on 3 key functional activities","Full return to overhead sport or work — unrestricted"]},
+];
+const IMP_PREC=[
+  {ico:"⚠️",txt:"Avoid painful arc (60–120° of shoulder abduction) during early phases — causes direct subacromial contact and bursal irritation"},
+  {ico:"🚨",txt:"Re-assess diagnosis if no improvement by Week 6 — rule out full-thickness RTC tear, AC joint pathology, or cervical referral"},
+  {ico:"🚫",txt:"Avoid upper trap dominant exercises (shrug-pattern) — reinforces faulty scapulohumeral rhythm and worsens impingement"},
+  {ico:"📋",txt:"Corticosteroid injection can reduce pain short-term but does NOT address mechanical cause — rehab still essential post-injection"},
+];
+const IMP_OUT=[
+  ["DASH","Disabilities of Arm, Shoulder & Hand — functional outcome (target <20 = minimal disability)"],
+  ["PSFS","Patient-Specific Functional Scale — 3 key overhead activities rated 0–10"],
+  ["SAT","Scapular Assistance Test — positive if assisted scapular upward rotation reduces impingement pain"],
+  ["Hawkins-Kennedy","Subacromial impingement special test — should become negative with successful rehab"],
+];
+
+/* ── ACHILLES TENDINOPATHY DATA ── */
+const ACHILLES=[
+  {id:1,name:"Isometric Loading",weeks:"Wks 1–2",goal:"Pain relief, tendon loading introduction, reduce reactive tendinopathy",color:"#16a34a",rgb:"22,163,74",light:"#16a34a",
+   criteria:"Morning stiffness <20 min, NRS ≤4/10 during isometrics, 24h response positive",
+   ex:[
+    {id:"ac1",name:"Isometric Calf Raise — Straight Knee",sets:"5×45s",reps:"70% body weight",note:"On leg press or stair. 45s sustained contraction — proven analgesic effect. 2 min rest between sets."},
+    {id:"ac2",name:"Isometric Calf Raise — Bent Knee (Soleus)",sets:"5×45s",reps:"25° knee flexion",note:"Targets soleus and deep Achilles insertion. Essential for insertional Achilles tendinopathy."},
+    {id:"ac3",name:"Load Management Education",sets:"Daily",reps:"Activity modification",note:"Reduce compressive loads: downhill walking, stretching into dorsiflexion on bent knee. NOT complete rest."},
+    {id:"ac4",name:"24h Response Diary",sets:"Daily log",reps:"NRS before/after/next morning",note:"Loading is correct if next-morning NRS ≤2 points above baseline. Adjust volume accordingly."},
+   ],
+   ms:["Morning stiffness <20 min","NRS ≤4/10 during and after isometric loading","24h response stable — no flare >2 points above baseline"]},
+  {id:2,name:"Isotonic Loading (HSR)",weeks:"Wks 3–8",goal:"Heavy Slow Resistance — tendon collagen synthesis and load capacity",color:"#15803d",rgb:"21,128,61",light:"#15803d",
+   criteria:"Single-leg heel raise ×15 pain-free, VISA-A ≥60, 24h response stable",
+   ex:[
+    {id:"ac5",name:"Eccentric Heel Drop — Straight Knee",sets:"3×15",reps:"3s lowering, both up / one down",note:"Classic Alfredson protocol — off a step edge. 12 weeks, 7 days/week. Pain ≤5/10 acceptable."},
+    {id:"ac6",name:"Eccentric Heel Drop — Bent Knee",sets:"3×15",reps:"25° knee flexion",note:"Soleus-dominant. Critical for insertional Achilles and midportion variants. Do BOTH daily."},
+    {id:"ac7",name:"Leg Press Single-Leg — HSR Calf",sets:"4×8–12",reps:"Heavy, 3–4s eccentric",note:"Heavier loading than Alfredson protocol. Equal or superior outcomes with less pain during loading."},
+    {id:"ac8",name:"Standing Calf Raise — Loaded",sets:"4×10",reps:"Barbell or Smith machine",note:"Bilateral → unilateral progression. Slow eccentric emphasis — 3s down, 1s up."},
+    {id:"ac9",name:"Seated Calf Raise — Soleus",sets:"4×10",reps:"90° knee flexion, loaded",note:"Isolated soleus loading — seated position. Essential complement to standing raises."},
+   ],
+   ms:["Single-leg heel raise ×20 without pain","VISA-A ≥70/100","Bilateral calf strength symmetry >80% on dynamometer or raise test"]},
+  {id:3,name:"Energy Storage & Plyometrics",weeks:"Wks 9–16",goal:"Tendon stiffness, elastic energy storage, running preparation",color:"#166534",rgb:"22,101,52",light:"#166534",
+   criteria:"Single-leg hop LSI ≥90%, NRS ≤2 during plyometrics, VISA-A ≥80",
+   ex:[
+    {id:"ac10",name:"Double-Leg Calf Jump",sets:"4×10",reps:"Quick small hops, GCT <0.25s",note:"Fast stretch-shortening cycle. Quiet landing. Progress: bilateral → unilateral."},
+    {id:"ac11",name:"Skipping / Jump Rope",sets:"3×1min",reps:"Gradual speed increase",note:"Achilles-specific plyometric. Monitor 24h response carefully — volume spikes cause flares."},
+    {id:"ac12",name:"Single-Leg Hop — Forward",sets:"3×8",reps:"Max distance, stick landing",note:"Hop LSI target ≥90% vs contralateral. Progress velocity and distance."},
+    {id:"ac13",name:"Reactive Bounding",sets:"3×20m",reps:"High stiffness, short GCT",note:"Running-specific tendon loading. Prepares Achilles for sprinting demands. 100% effort."},
+    {id:"ac14",name:"Running Return — Intervals",sets:"Walk/run intervals",reps:"10% weekly load rule",note:"Couch to 5K style. Monitor NRS and 24h response at each stage. No hills until Phase 4."},
+   ],
+   ms:["Triple hop LSI ≥90% vs. contralateral","Single-leg calf raise endurance >30 reps","VISA-A ≥80/100 — return to sport eligible"]},
+  {id:4,name:"Return to Sport",weeks:"Wks 17–24",goal:"Full sport loading, recurrence prevention, long-term load management",color:"#16a34a",rgb:"22,163,74",light:"#16a34a",
+   criteria:"VISA-A ≥90, full training load ×4 weeks, NRS ≤1 during sport",
+   ex:[
+    {id:"ac15",name:"Graduated Running Return",sets:"Progressive intervals",reps:"Intensity → full sprint",note:"10% weekly volume rule. Avoid sudden spike in distance, speed, or surface change."},
+    {id:"ac16",name:"Sport-Specific Drills",sets:"Full session",reps:"Cutting, sprinting, jumping",note:"Match sport demands. Monitor VISA-A weekly. Adjust if flare >2/10 above baseline."},
+    {id:"ac17",name:"Maintenance HSR Loading",sets:"2×/week",reps:"Eccentric heel drops or leg press",note:"Continue maintenance dose lifelong — tendon health requires ongoing mechanical stimulus."},
+    {id:"ac18",name:"Load Spike Education",sets:"Ongoing",reps:"Preseason risk management",note:"Educate on 10% rule, rest-day management, and early warning signs of reactive tendinopathy."},
+   ],
+   ms:["VISA-A ≥90/100","Full training load ×4 consecutive weeks without flare","Independent load management plan for future preseason periods"]},
+];
+const ACH_PREC=[
+  {ico:"🚫",txt:"Do NOT rest completely — Achilles tendinopathy requires progressive LOADING. Absolute rest causes tendon deconditioning and delays recovery"},
+  {ico:"⚠️",txt:"Avoid compressive loads in reactive phase: dorsiflexion stretch on bent knee, downhill walking, and barefoot walking on hard surfaces"},
+  {ico:"🚨",txt:"Rule out partial or complete Achilles tendon tear with ultrasound before starting loading — different management pathway"},
+  {ico:"📋",txt:"Monitor 24h response: next-morning NRS >2 above baseline = too much load. Reduce VOLUME not frequency. Never skip two consecutive days."},
+];
+const ACH_OUT=[
+  ["VISA-A","Victorian Institute of Sport Assessment — Achilles (0–100). Target ≥90 for return to sport"],
+  ["24h Response","NRS next morning post-loading — primary dose guide. ≤2 above baseline = appropriate load"],
+  ["Single-Leg Raise","Calf raise endurance test — >30 reps single-leg required for RTS clearance"],
+  ["Hop LSI","Triple hop limb symmetry index — ≥90% required for safe return to running/sport"],
+];
+
+/* ── PATELLAR TENDINOPATHY DATA ── */
+const PATELLAR=[
+  {id:1,name:"Isometric Loading",weeks:"Wks 1–2",goal:"Cortical pain inhibition, reactive phase management, load introduction",color:"#059669",rgb:"5,150,105",light:"#059669",
+   criteria:"Morning stiffness <20 min, NRS ≤4/10 during isometrics, 24h response positive",
+   ex:[
+    {id:"pt1",name:"Isometric Leg Extension Hold",sets:"5×45s",reps:"60–80% of max",note:"Knee at 60° flexion on leg extension machine. 45s sustained hold — proven cortical pain inhibition."},
+    {id:"pt2",name:"Wall Sit Isometric",sets:"5×45s",reps:"Knee at 60–70° flexion",note:"Alternative if leg extension machine unavailable. Equal isometric stimulus — 2 min rest between sets."},
+    {id:"pt3",name:"Load Management Education",sets:"Daily",reps:"Activity modification",note:"Reduce jumping, deep squatting, and stairs. NOT complete rest. Relative load reduction only."},
+    {id:"pt4",name:"24h Response Diary",sets:"Daily log",reps:"NRS before/after/next morning",note:"Key dosing guide — next-morning NRS ≤2 above baseline = correct loading. Adjust volume only."},
+   ],
+   ms:["Morning stiffness <20 min","NRS ≤4/10 during and post isometric sets","24h response positive — no next-day flare >2/10"]},
+  {id:2,name:"Isotonic Loading (HSR)",weeks:"Wks 3–10",goal:"Heavy Slow Resistance — tendon collagen synthesis, load capacity, quad strength",color:"#047857",rgb:"4,120,87",light:"#047857",
+   criteria:"VISA-P ≥60, single-leg decline squat ×10 NRS ≤3, 24h response stable",
+   ex:[
+    {id:"pt5",name:"Decline Squat — Single Leg Eccentric",sets:"4×10",reps:"25° decline board, 3–4s lowering",note:"Gold standard — Purdam protocol. Decline board maximizes patellar tendon load. Pain ≤5/10 OK. 12 weeks."},
+    {id:"pt6",name:"Leg Extension — Heavy Slow Resistance",sets:"4×8",reps:"Slow eccentric 4s down, full ROM",note:"HSR — equal evidence to eccentric-only with less pain during loading. Start bilateral, progress unilateral."},
+    {id:"pt7",name:"Leg Press — Bilateral → Unilateral",sets:"4×10",reps:"Heavy, 3s eccentric",note:"Quad dominant. Start bilateral heavy → progress to single-leg. Monitor VISA-P weekly."},
+    {id:"pt8",name:"Spanish Squat",sets:"3×10",reps:"Band around post, upright trunk",note:"Isolates quad-tendon interface with minimal hip flexion. Excellent patellar tendon specific load."},
+    {id:"pt9",name:"Walking Lunges",sets:"3×10",reps:"Each leg, BW → weighted vest",note:"Functional patellar tendon loading. Progress load based on 24h response — not pain during."},
+   ],
+   ms:["Single-leg decline squat ×15 with NRS ≤3","VISA-P ≥70/100","Single-leg quad strength >80% LSI (leg press or isokinetic)"]},
+  {id:3,name:"Energy Storage & Plyometrics",weeks:"Wks 11–18",goal:"Stretch-shortening cycle loading, hop capacity, jumping readiness",color:"#065f46",rgb:"6,95,70",light:"#065f46",
+   criteria:"Single-leg hop LSI ≥90%, NRS ≤2 during plyometrics, VISA-P ≥80",
+   ex:[
+    {id:"pt10",name:"Double-Leg Box Jump",sets:"4×6",reps:"30cm box, stick landing 2s",note:"Introduce bilateral jumping first. Soft landing: hip/knee/ankle simultaneous flexion. Quiet feet."},
+    {id:"pt11",name:"Single-Leg Hop — Forward",sets:"3×8",reps:"Max distance, stick landing",note:"Patellar tendon hop LSI ≥90% required for RTS. Progress from bilateral → unilateral carefully."},
+    {id:"pt12",name:"Depth Drop → Jump",sets:"4×5",reps:"30cm box, absorb then re-jump",note:"Reactive plyometric — highest tendon demand. Introduce only when NRS ≤2 during all previous hops."},
+    {id:"pt13",name:"Lateral Bounds",sets:"3×8",reps:"Each direction, stick landing",note:"Multi-directional loading — sport preparation. Monitor valgus control on landing."},
+    {id:"pt14",name:"Return to Jumping / Sport Drills",sets:"Graduated",reps:"10% weekly load increase",note:"Non-contact → modified contact → full training. Monitor VISA-P and 24h response throughout."},
+   ],
+   ms:["Single-leg hop LSI ≥90% all 4 hop tests","VISA-P ≥80/100","Full plyometric session NRS ≤2 and stable 24h response"]},
+  {id:4,name:"Return to Sport",weeks:"Wks 19–24+",goal:"Full sport loading, recurrence prevention, long-term load management",color:"#059669",rgb:"5,150,105",light:"#059669",
+   criteria:"VISA-P ≥90, full training load ×4 weeks, NRS ≤1, clearance granted",
+   ex:[
+    {id:"pt15",name:"Full Training Integration",sets:"Graduated",reps:"Non-contact → full contact",note:"Progressive return: skills only → training modified → full training → competition."},
+    {id:"pt16",name:"Sport-Specific Jumping Drills",sets:"Full session",reps:"Position-specific demands",note:"Volleyball, basketball, football — replicate exact jumping demands. Monitor VISA-P weekly."},
+    {id:"pt17",name:"Maintenance HSR Loading",sets:"2×/week",reps:"Decline squat or leg extension",note:"Lifelong maintenance protocol — patellar tendon recurrence rate is high without ongoing load."},
+    {id:"pt18",name:"Preseason Load Planning",sets:"Annual",reps:"Load management strategy",note:"Map training load spikes preseason — highest risk period. Reduce volume before increasing intensity."},
+   ],
+   ms:["VISA-P ≥90/100","Full training load ×4 consecutive weeks without flare","Long-term load management strategy documented and understood by patient"]},
+];
+const PAT_PREC=[
+  {ico:"🚫",txt:"Do NOT rest completely — patellar tendinopathy requires progressive LOADING. Rest causes tendon deconditioning and worsens long-term outcomes"},
+  {ico:"⚠️",txt:"Avoid deep squatting, heavy stair descent, and high-volume jumping in reactive phase — compressive loads irritate patellar tendon insertion"},
+  {ico:"🚨",txt:"Rule out Sinding-Larsen-Johansson (adolescents) and partial patellar tendon tear with ultrasound before loading"},
+  {ico:"📋",txt:"Decline squat is most effective but also most provocative — always introduce isometrics first and progress based on 24h response, not in-session pain"},
+];
+const PAT_OUT=[
+  ["VISA-P","Victorian Institute of Sport Assessment — Patellar (0–100). Target ≥90 for return to sport"],
+  ["24h Response","NRS next morning post-loading — primary dose guide. ≤2 above baseline = correct load"],
+  ["Decline Squat Test","Single-leg decline squat ×15 NRS ≤3 — functional loading milestone for Phase 2→3 progression"],
+  ["Hop LSI","Single-leg hop limb symmetry index — ≥90% required for safe return to jumping sport"],
+];
+
+/* ── STATE ── */
+const S={
+  aclChecked:{}, aclPh:1, aclTab:"ex",
+  shChecked:{},  shPh:1,  shTab:"ex",
+  ldhmChecked:{}, ldhmPh:1, ldhmTab:"ex",
+  scolChecked:{}, scolPh:1, scolTab:"ex",
+  impChecked:{},  impPh:1,  impTab:"ex",
+  achChecked:{},  achPh:1,  achTab:"ex",
+  patChecked:{},  patPh:1,  patTab:"ex",
+  spineData:{},
+  libQ:"", libCat:"All",
+  patients:[],
+};
+
+/* ── NAV ── */
+function nav(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>{
+    if(n.getAttribute('onclick')&&n.getAttribute('onclick').includes("'"+id+"'"))n.classList.add('active');
+  });
+  
+  document.getElementById("app-sidebar").classList.remove("open");
+
+  if(id==='acl')renderRehab('acl');
+  if(id==='shoulder')renderRehab('shoulder');
+  if(id==='ldhm')renderGeneric('ldhm');
+  if(id==='scoliosis')renderGeneric('scoliosis');
+  if(id==='impingement')renderGeneric('impingement');
+  if(id==='achilles')renderGeneric('achilles');
+  if(id==='patellar')renderGeneric('patellar');
+  if(id==='spine')renderSpine();
+  if(id==='library')renderLibrary();
+  if(id==='tracker')renderTracker();
+}
+
+/* ── REHAB (shared ACL + SHOULDER) ── */
+function renderRehab(tool){
+  const isACL=tool==='acl';
+  const phases=isACL?ACL:SHOULDER;
+  const chk=isACL?S.aclChecked:S.shChecked;
+  const phIdx=isACL?S.aclPh:S.shPh;
+  const tab=isACL?S.aclTab:S.shTab;
+  const p=phases[phIdx-1];
+  const done=p.ex.filter(e=>chk[e.id]).length;
+  const pct=Math.round((done/p.ex.length)*100);
+  const C=188.5, d=(pct/100)*C;
+
+  const phaseBtns=phases.map(ph=>`
+    <button class="pp${ph.id===phIdx?' act':''}"
+      style="--pc:${ph.color};--pr:${ph.rgb};--pl:${ph.light}"
+      onclick="${tool}Ph(${ph.id})">
+      <div class="pp-n">Phase ${ph.id}</div>
+      <div class="pp-name">${ph.name}</div>
+      <div class="pp-wk">${ph.weeks}</div>
+    </button>`).join('');
+
+  let content='';
+  if(tab==='ex'){
+    content=`<div class="ex-list">
+      ${p.ex.map((ex,i)=>{
+        const on=chk[ex.id];
+        return`<div class="ex-card${on?' done':''}" style="${on?`background:${p.color}05;border-color:${p.color}30`:''}"  >
+          <div class="chkbox${on?' on':''}" style="--pc:${p.color}" onclick="${tool}Chk('${ex.id}')">${on?'✓':''}</div>
+          <div class="ex-info">
+            <div class="ex-row">
+              <span class="ex-name${on?' done':''}">${ex.name}</span>
+              <span class="ex-bdg" style="background:${p.color}10;color:${p.color}">${ex.sets}</span>
+              <span class="ex-rps">${ex.reps}</span>
+            </div>
+            <div class="ex-note">💡 ${ex.note}</div>
+          </div>
+          <div class="ex-num">${String(i+1).padStart(2,'0')}</div>
+        </div>`;
+      }).join('')}
+      ${done>0?`<button class="reset-btn" onclick="${tool}Reset()">↺ Reset session</button>`:''}
+    </div>`;
+  } else if(tab==='ms'){
+    content=`<div class="ms-list">
+      ${p.ms.map((m,i)=>`
+        <div class="ms-item" style="--pc:${p.color};--pr:${p.rgb}">
+          <div class="ms-num">${i+1}</div>
+          <div class="ms-txt">${m}</div>
+        </div>`).join('')}
+      <div style="margin-top:8px;padding:12px 14px;background:var(--navy3);border-radius:10px;border-left:3px solid ${p.color};font-size:12px;color:var(--light)">
+        <span style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;font-weight:600">Phase-out criteria &nbsp;·&nbsp; </span>${p.criteria}
+      </div>
+    </div>`;
+  } else {
+    content=`<div class="pr-list">
+      ${PRECAUTIONS.map(pr=>`<div class="pr-item"><span class="pr-ico">${pr.ico}</span><span class="pr-txt">${pr.txt}</span></div>`).join('')}
+      <div class="outcomes" style="margin-top:4px">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:var(--light);margin-bottom:10px;letter-spacing:0.05em">KEY OUTCOME MEASURES</div>
+        ${OUTCOMES.map(([t,d])=>`<div class="out-row"><span class="out-term">${t}</span><span class="out-desc">${d}</span></div>`).join('')}
+      </div>
+    </div>`;
+  }
+
+  const eye=isACL?"ACL Rehabilitation Program":"Shoulder Rehabilitation Protocol";
+  const title=isACL?"ACL Rehab":"Shoulder Rehab";
+  const sub=isACL?"Post-op & conservative · 5 Phases · 9-month progressive protocol":"Rotator cuff & instability · 4 Phases · 5-month protocol";
+
+  document.getElementById('page-'+tool).innerHTML=`
+    <div class="ph">
+      <div class="ph-eye">${eye}</div>
+      <div class="ph-title">${title}</div>
+      <div class="ph-sub">${sub}</div>
+      <div class="ph-line"></div>
+    </div>
+    <div class="phase-bar">${phaseBtns}</div>
+    <div class="phdr" style="--pc:${p.color};--pr:${p.rgb};--pl:${p.light}">
+      <div class="phdr-top">
+        <div>
+          <div class="phdr-lbl">Phase ${p.id} · ${p.weeks}</div>
+          <div class="phdr-name">${p.name}</div>
+          <div class="phdr-goal"><strong style="color:var(--text)">Goal:</strong> ${p.goal}</div>
+        </div>
+        <div class="ring-w">
+          <svg width="64" height="64" viewBox="0 0 64 64">
+            <circle cx="32" cy="32" r="26" fill="none" stroke="var(--border)" stroke-width="5"/>
+            <circle cx="32" cy="32" r="26" fill="none" stroke="${p.color}" stroke-width="5"
+              stroke-dasharray="${d} ${C}" stroke-linecap="round"
+              transform="rotate(-90 32 32)" style="transition:stroke-dasharray 0.5s"/>
+          </svg>
+          <span class="ring-pct">${pct}%</span>
+          <div class="ring-sub">${done}/${p.ex.length} done</div>
+        </div>
+      </div>
+      <div class="phdr-crit"><span class="crit-lbl">Phase-out: </span>${p.criteria}</div>
+    </div>
+    <div class="tabs">
+      <button class="tab${tab==='ex'?' act':''}" onclick="${tool}Tab('ex')">Exercises (${p.ex.length})</button>
+      <button class="tab${tab==='ms'?' act':''}" onclick="${tool}Tab('ms')">Milestones (${p.ms.length})</button>
+      <button class="tab${tab==='pr'?' act':''}" onclick="${tool}Tab('pr')">⚠️ Precautions</button>
+    </div>
+    ${content}`;
+}
+
+function aclPh(i){S.aclPh=i;S.aclTab='ex';renderRehab('acl')}
+function aclTab(t){S.aclTab=t;renderRehab('acl')}
+function aclChk(id){S.aclChecked[id]=!S.aclChecked[id];renderRehab('acl')}
+function aclReset(){ACL[S.aclPh-1].ex.forEach(e=>delete S.aclChecked[e.id]);renderRehab('acl')}
+function shoulderPh(i){S.shPh=i;S.shTab='ex';renderRehab('shoulder')}
+function shoulderTab(t){S.shTab=t;renderRehab('shoulder')}
+function shoulderChk(id){S.shChecked[id]=!S.shChecked[id];renderRehab('shoulder')}
+function shoulderReset(){SHOULDER[S.shPh-1].ex.forEach(e=>delete S.shChecked[e.id]);renderRehab('shoulder')}
+
+/* ── GENERIC REHAB RENDERER ── */
+const GENERIC_CFG={
+  ldhm:{data:LDHM,prec:LDHM_PREC,out:LDHM_OUT,chkKey:'ldhmChecked',phKey:'ldhmPh',tabKey:'ldhmTab',eye:'Lumbar Disc Herniation',title:'McKenzie Approach',sub:'Directional Preference · 4 Phases · Evidence-Based Spinal Rehabilitation'},
+  scoliosis:{data:SCOLIOSIS,prec:SCOL_PREC,out:SCOL_OUT,chkKey:'scolChecked',phKey:'scolPh',tabKey:'scolTab',eye:'Scoliosis Rehabilitation',title:'Schroth Method',sub:'PSSE · 3D Postural Correction · Rotational Angular Breathing'},
+  impingement:{data:IMPINGEMENT,prec:IMP_PREC,out:IMP_OUT,chkKey:'impChecked',phKey:'impPh',tabKey:'impTab',eye:'Shoulder Impingement Syndrome',title:'Shoulder Impingement',sub:'Subacromial Impingement · 4 Phases · Scapular Control & RTC Protocol'},
+  achilles:{data:ACHILLES,prec:ACH_PREC,out:ACH_OUT,chkKey:'achChecked',phKey:'achPh',tabKey:'achTab',eye:'Tendinopathy Rehabilitation',title:'Achilles Tendinopathy',sub:'Alfredson Eccentric + HSR · Isometric → Plyometric · VISA-A Monitored'},
+  patellar:{data:PATELLAR,prec:PAT_PREC,out:PAT_OUT,chkKey:'patChecked',phKey:'patPh',tabKey:'patTab',eye:'Tendinopathy Rehabilitation',title:'Patellar Tendinopathy',sub:'Decline Squat + HSR Protocol · Jumper\'s Knee · VISA-P Monitored'},
+};
+function renderGeneric(tool){
+  const cfg=GENERIC_CFG[tool];
+  const phases=cfg.data;
+  const chk=S[cfg.chkKey];
+  const phIdx=S[cfg.phKey];
+  const tab=S[cfg.tabKey];
+  const p=phases[phIdx-1];
+  const done=p.ex.filter(e=>chk[e.id]).length;
+  const pct=Math.round((done/p.ex.length)*100);
+  const C=188.5, d=(pct/100)*C;
+
+  const phaseBtns=phases.map(ph=>`
+    <button class="pp${ph.id===phIdx?' act':''}"
+      style="--pc:${ph.color};--pr:${ph.rgb};--pl:${ph.light}"
+      onclick="gPh('${tool}',${ph.id})">
+      <div class="pp-n">Phase ${ph.id}</div>
+      <div class="pp-name">${ph.name}</div>
+      <div class="pp-wk">${ph.weeks}</div>
+    </button>`).join('');
+
+  let content='';
+  if(tab==='ex'){
+    content=`<div class="ex-list">
+      ${p.ex.map((ex,i)=>{
+        const on=chk[ex.id];
+        return`<div class="ex-card${on?' done':''}" style="${on?`background:${p.color}05;border-color:${p.color}30`:''}">
+          <div class="chkbox${on?' on':''}" style="--pc:${p.color}" onclick="gChk('${tool}','${ex.id}')">${on?'✓':''}</div>
+          <div class="ex-info">
+            <div class="ex-row">
+              <span class="ex-name${on?' done':''}">${ex.name}</span>
+              <span class="ex-bdg" style="background:${p.color}10;color:${p.color}">${ex.sets}</span>
+              <span class="ex-rps">${ex.reps}</span>
+            </div>
+            <div class="ex-note">💡 ${ex.note}</div>
+          </div>
+          <div class="ex-num">${String(i+1).padStart(2,'0')}</div>
+        </div>`;
+      }).join('')}
+      ${done>0?`<button class="reset-btn" onclick="gReset('${tool}')">↺ Reset session</button>`:''}
+    </div>`;
+  } else if(tab==='ms'){
+    content=`<div class="ms-list">
+      ${p.ms.map((m,i)=>`
+        <div class="ms-item" style="--pc:${p.color};--pr:${p.rgb}">
+          <div class="ms-num">${i+1}</div>
+          <div class="ms-txt">${m}</div>
+        </div>`).join('')}
+      <div style="margin-top:8px;padding:12px 14px;background:var(--navy3);border-radius:10px;border-left:3px solid ${p.color};font-size:12px;color:var(--light)">
+        <span style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;font-weight:600">Phase-out criteria &nbsp;·&nbsp; </span>${p.criteria}
+      </div>
+    </div>`;
+  } else {
+    content=`<div class="pr-list">
+      ${cfg.prec.map(pr=>`<div class="pr-item"><span class="pr-ico">${pr.ico}</span><span class="pr-txt">${pr.txt}</span></div>`).join('')}
+      <div class="outcomes" style="margin-top:4px">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:var(--light);margin-bottom:10px;letter-spacing:0.05em">KEY OUTCOME MEASURES</div>
+        ${cfg.out.map(([t,d])=>`<div class="out-row"><span class="out-term">${t}</span><span class="out-desc">${d}</span></div>`).join('')}
+      </div>
+    </div>`;
+  }
+
+  document.getElementById('page-'+tool).innerHTML=`
+    <div class="ph">
+      <div class="ph-eye">${cfg.eye}</div>
+      <div class="ph-title">${cfg.title}</div>
+      <div class="ph-sub">${cfg.sub}</div>
+      <div class="ph-line"></div>
+    </div>
+    <div class="phase-bar">${phaseBtns}</div>
+    <div class="phdr" style="--pc:${p.color};--pr:${p.rgb};--pl:${p.light}">
+      <div class="phdr-top">
+        <div>
+          <div class="phdr-lbl">Phase ${p.id} · ${p.weeks}</div>
+          <div class="phdr-name">${p.name}</div>
+          <div class="phdr-goal"><strong style="color:var(--text)">Goal:</strong> ${p.goal}</div>
+        </div>
+        <div class="ring-w">
+          <svg width="64" height="64" viewBox="0 0 64 64">
+            <circle cx="32" cy="32" r="26" fill="none" stroke="var(--border)" stroke-width="5"/>
+            <circle cx="32" cy="32" r="26" fill="none" stroke="${p.color}" stroke-width="5"
+              stroke-dasharray="${d} ${C}" stroke-linecap="round"
+              transform="rotate(-90 32 32)" style="transition:stroke-dasharray 0.5s"/>
+          </svg>
+          <span class="ring-pct">${pct}%</span>
+          <div class="ring-sub">${done}/${p.ex.length} done</div>
+        </div>
+      </div>
+      <div class="phdr-crit"><span class="crit-lbl">Phase-out: </span>${p.criteria}</div>
+    </div>
+    <div class="tabs">
+      <button class="tab${tab==='ex'?' act':''}" onclick="gTab('${tool}','ex')">Exercises (${p.ex.length})</button>
+      <button class="tab${tab==='ms'?' act':''}" onclick="gTab('${tool}','ms')">Milestones (${p.ms.length})</button>
+      <button class="tab${tab==='pr'?' act':''}" onclick="gTab('${tool}','pr')">⚠️ Precautions</button>
+    </div>
+    ${content}`;
+}
+function gPh(tool,i){S[GENERIC_CFG[tool].phKey]=i;S[GENERIC_CFG[tool].tabKey]='ex';renderGeneric(tool)}
+function gTab(tool,t){S[GENERIC_CFG[tool].tabKey]=t;renderGeneric(tool)}
+function gChk(tool,id){const k=GENERIC_CFG[tool].chkKey;S[k][id]=!S[k][id];renderGeneric(tool)}
+function gReset(tool){const cfg=GENERIC_CFG[tool];GENERIC_CFG[tool].data[S[cfg.phKey]-1].ex.forEach(e=>delete S[cfg.chkKey][e.id]);renderGeneric(tool)}
+
+/* ── SPINE ASSESSMENT ── */
+function renderSpine(){
+  let total=0,pos=0,mod=0,neg=0;
+  SPINE_SECS.forEach(s=>total+=s.items.length);
+  Object.values(S.spineData).forEach(v=>{if(v==='p')pos++;else if(v==='m')mod++;else if(v==='n')neg++});
+  const filled=pos+mod+neg;
+  const pct=total?Math.round((filled/total)*100):0;
+
+  const secs=SPINE_SECS.map((sec,si)=>`
+    <div class="sp-section">
+      <div class="sp-title">${sec.title}</div>
+      ${sec.items.map((item,ii)=>{
+        const k=`${si}-${ii}`;const v=S.spineData[k]||'';
+        return`<div class="sp-item">
+          <span class="sp-lbl">${item}</span>
+          <div class="sp-opts">
+            <button class="opt${v==='p'?' p':''}" onclick="spSet('${k}','p')" title="Positive">+</button>
+            <button class="opt${v==='m'?' m':''}" onclick="spSet('${k}','m')" title="Moderate">~</button>
+            <button class="opt${v==='n'?' n':''}" onclick="spSet('${k}','n')" title="Negative">−</button>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`).join('');
+
+  document.getElementById('page-spine').innerHTML=`
+    <div class="ph">
+      <div class="ph-eye">Clinical Assessment</div>
+      <div class="ph-title">Spine Assessment</div>
+      <div class="ph-sub">Mark each finding: <strong style="color:#16a34a">+ positive</strong> &nbsp;·&nbsp; <strong style="color:#d97706">~ moderate</strong> &nbsp;·&nbsp; <strong style="color:#dc2626">− negative</strong></div>
+      <div class="ph-line"></div>
+    </div>
+    <div class="spine-grid">${secs}</div>
+    <div class="sp-summary" style="margin-top:14px">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;margin-bottom:12px">📋 Assessment Summary</div>
+      <div class="sp-sum-row"><span class="sp-sum-key">Completion</span><span class="sp-sum-val" style="color:var(--teal)">${pct}% &nbsp;(${filled} / ${total})</span></div>
+      <div class="sp-sum-row"><span class="sp-sum-key">Positive findings (+)</span><span class="sp-sum-val" style="color:#16a34a">${pos}</span></div>
+      <div class="sp-sum-row"><span class="sp-sum-key">Moderate findings (~)</span><span class="sp-sum-val" style="color:#d97706">${mod}</span></div>
+      <div class="sp-sum-row"><span class="sp-sum-key">Negative findings (−)</span><span class="sp-sum-val" style="color:#dc2626">${neg}</span></div>
+      <button class="reset-btn" onclick="spReset()">↺ Clear all findings</button>
+    </div>`;
+}
+function spSet(k,v){S.spineData[k]=S.spineData[k]===v?'':v;renderSpine()}
+function spReset(){S.spineData={};renderSpine()}
+
+/* ── EXERCISE LIBRARY ── */
+function renderLibrary(){
+  const q=S.libQ.toLowerCase();
+  const filtered=EXLIB.filter(e=>{
+    const mc=S.libCat==='All'||e.cat===S.libCat;
+    const mq=!q||e.name.toLowerCase().includes(q)||e.muscle.toLowerCase().includes(q)||e.tags.some(t=>t.toLowerCase().includes(q));
+    return mc&&mq;
+  });
+  const fbtns=CATS.map(c=>`<button class="fbtn${S.libCat===c?' on':''}" onclick="libCat('${c}')">${c}</button>`).join('');
+  const cards=filtered.length
+    ?filtered.map(ex=>`
+      <div class="lib-card">
+        <div class="lib-top">
+          <div class="lib-name">${ex.name}</div>
+          <span class="lib-cat" style="background:${ex.cb};color:${ex.cc}">${ex.cat}</span>
+        </div>
+        <div class="lib-muscle">🎯 ${ex.muscle}</div>
+        <div class="lib-detail"><strong style="color:var(--light)">Sets:</strong> ${ex.sets} &nbsp;|&nbsp; <strong style="color:var(--light)">Reps:</strong> ${ex.reps}</div>
+        <div class="lib-detail" style="margin-top:4px">${ex.note}</div>
+        <div class="lib-foot">${ex.tags.map(t=>`<span class="lib-chip">${t}</span>`).join('')}</div>
+      </div>`).join('')
+    :`<div class="empty">No exercises match "${S.libQ||S.libCat}" — try a different search or filter.</div>`;
+
+  document.getElementById('page-library').innerHTML=`
+    <div class="ph">
+      <div class="ph-eye">Resources</div>
+      <div class="ph-title">Exercise Library</div>
+      <div class="ph-sub">${EXLIB.length} exercises · search by name, muscle, or keyword</div>
+      <div class="ph-line"></div>
+    </div>
+    <input class="lib-search" placeholder="Search exercises, muscles, tags…" value="${S.libQ}" oninput="libQ(this.value)"/>
+    <div class="filter-row">${fbtns}</div>
+    <div class="lib-grid">${cards}</div>`;
+}
+function libQ(v){S.libQ=v;renderLibrary()}
+function libCat(c){S.libCat=c;renderLibrary()}
+
+/* ── PATIENT TRACKER ── */
+function renderTracker(){
+  document.getElementById('stat-pts').textContent=S.patients.length;
+  const PHASE_NAMES=["Phase 1 — Acute","Phase 2 — Control","Phase 3 — Strength","Phase 4 — Power","Phase 5 — RTS"];
+  const PHASE_CLR=["#dc2626","#d97706","#16a34a","#4f46e5","#06b6d4"];
+  const PCTS=[8,28,55,78,100];
+  const list=S.patients.length
+    ?S.patients.map((pt,i)=>{
+        const c=PHASE_CLR[pt.phase-1];
+        const pct=PCTS[pt.phase-1];
+        return`<div class="pt-card">
+          <div class="pt-top">
+            <div>
+              <div class="pt-name">${pt.name}</div>
+              <div class="pt-meta"><span>📋 ${pt.cond}</span><span>🎂 ${pt.age} yrs</span><span>📅 ${pt.date}</span></div>
+            </div>
+            <span class="pt-badge" style="background:${c}10;color:${c};border:1px solid ${c}30">${PHASE_NAMES[pt.phase-1]}</span>
+          </div>
+          <div class="pt-bar"><div class="pt-fill" style="width:${pct}%"></div></div>
+          <div class="pt-bar-lbl"><span>Rehab progress</span><span>${pct}%</span></div>
+          ${pt.notes?`<div class="pt-notes">📝 ${pt.notes}</div>`:''}
+          <div class="pt-actions">
+            <select class="pt-sel" onchange="ptPhase(${i},this.value)">
+              ${[1,2,3,4,5].map(n=>`<option value="${n}"${pt.phase===n?' selected':''}>Phase ${n}</option>`).join('')}
+            </select>
+            <button class="pt-del" onclick="ptDel(${i})">Remove ✕</button>
+          </div>
+        </div>`;
+      }).join('')
+    :`<div class="empty-pt">No patients added yet.<br>Fill the form on the left to add your first patient.</div>`;
+
+  document.getElementById('page-tracker').innerHTML=`
+    <div class="ph">
+      <div class="ph-eye">Patient Management</div>
+      <div class="ph-title">Patient Tracker</div>
+      <div class="ph-sub">Add patients, track rehab phase, log progress notes</div>
+      <div class="ph-line"></div>
+    </div>
+    <div class="tracker-layout">
+      <div class="form-box">
+        <h3>Add Patient</h3>
+        <div class="fld"><label>Full Name</label><input id="pt-n" placeholder="Ahmed Mohamed"/></div>
+        <div class="fld"><label>Age</label><input id="pt-a" type="number" placeholder="28" min="1" max="120"/></div>
+        <div class="fld"><label>Condition / Diagnosis</label>
+          <select id="pt-c">
+            <option>ACL Reconstruction</option><option>Rotator Cuff Repair</option>
+            <option>Lumbar Disc Herniation</option><option>Shoulder Impingement</option>
+            <option>Meniscus Repair</option><option>Patellofemoral Pain</option>
+            <option>Ankle Sprain</option><option>Cervical Radiculopathy</option>
+            <option>Hip Labrum Repair</option><option>Other</option>
+          </select>
+        </div>
+        <div class="fld"><label>Start Date</label><input id="pt-d" type="date"/></div>
+        <div class="fld"><label>Current Phase</label>
+          <select id="pt-p">
+            <option value="1">Phase 1 — Acute</option>
+            <option value="2">Phase 2 — Control</option>
+            <option value="3">Phase 3 — Strength</option>
+            <option value="4">Phase 4 — Power</option>
+            <option value="5">Phase 5 — Return to Sport</option>
+          </select>
+        </div>
+        <div class="fld"><label>Clinical Notes</label><textarea id="pt-notes" placeholder="Goals, precautions, key findings…"></textarea></div>
+        <button class="add-btn" onclick="ptAdd()">+ Add Patient</button>
+      </div>
+      <div class="pt-list">${list}</div>
+    </div>`;
+}
+
+function ptAdd(){
+  const n=document.getElementById('pt-n').value.trim();
+  if(!n)return;
+  S.patients.push({
+    name:n,
+    age:document.getElementById('pt-a').value||'—',
+    cond:document.getElementById('pt-c').value,
+    date:document.getElementById('pt-d').value||new Date().toISOString().split('T')[0],
+    phase:parseInt(document.getElementById('pt-p').value),
+    notes:document.getElementById('pt-notes').value.trim(),
+  });
+  renderTracker();
+}
+function ptDel(i){S.patients.splice(i,1);renderTracker()}
+function ptPhase(i,v){S.patients[i].phase=parseInt(v);renderTracker()}
+</script>
+</body>
+</html>
